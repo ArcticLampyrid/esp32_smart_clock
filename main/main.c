@@ -1,3 +1,4 @@
+#include "oled.h"
 #include <driver/gpio.h>
 #include <driver/spi_master.h>
 #include <esp_log.h>
@@ -13,9 +14,9 @@
 #include "homepage_mode.h"
 #include "wifi_config_mode.h"
 #include "pin_layout.h"
-#include "oled.h"
 #include "key_dispatcher.h"
 #include "rx8025.h"
+#include "alarm.h"
 static char TAG[] = "clock";
 void task_dispatch_for_keys(void *pvParameters)
 {
@@ -43,6 +44,9 @@ void app_main()
     io_conf.pull_down_en = 0;
     gpio_config(&io_conf);
 
+    alarm_list = arraylist_of_alarm_new();
+    scheduled_alarm_info.alarm = NULL;
+
     wifi_init();
     wifi_soft_ap_reset();
 
@@ -64,7 +68,14 @@ void app_main()
     {
         if (g_currect_mode->on_refresh)
             g_currect_mode->on_refresh(g_currect_mode);
+        if (scheduled_alarm_info.alarm)
+        {
+            if (rx8025_time_cmp(scheduled_alarm_info.at, rx8025_get_time()) <= 0)
+            {
+                scheduled_alarm_info.alarm->play(scheduled_alarm_info.alarm);
+                reschedule_alarm(&scheduled_alarm_info, &alarm_list);
+            }
+        }
     }
-
     // ESP_LOGI(TAG, "All done!");
 }

@@ -41,80 +41,23 @@ static void set_key_on_pressed(struct time_setter_mode_t *mode, enum key_state_t
     ESP_LOGI(TAG, "set_key_on_pressed, progress = %d", mode->progress);
     mode->progress++;
     mode->display_cycle = -1;
-}
-static bcd8_t day_in_month_bcd(bcd8_t year2, bcd8_t month)
-{
-    static bcd8_t day_in_month[12] = {0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31};
-    bcd8_t result = day_in_month[bcd8_to_uint8(month) - 1];
-    if (month == 0x02 && bcd8_to_uint8(year2) % 4 == 0)
+    if (mode->progress == 6)
     {
-        result += 1;
+        rx8025_set_time(mode->time);
+        switch_to_homepage();
     }
-    return result;
 }
 static void up_key_on_pressed(struct time_setter_mode_t *mode, enum key_state_t before)
 {
     ESP_LOGI(TAG, "up_key_on_pressed, progress = %d", mode->progress);
-    switch (mode->progress)
-    {
-    case 0:
-        mode->time.year = mode->time.year == 0x99 ? 0x00 : bcd8_inc(mode->time.year);
-        rx8025_fix_weekday(&mode->time);
-        break;
-    case 1:
-        mode->time.month = mode->time.month == 0x12 ? 0x01 : bcd8_inc(mode->time.month);
-        rx8025_fix_weekday(&mode->time);
-        break;
-    case 2:
-        if (mode->time.day == day_in_month_bcd(mode->time.year, mode->time.month))
-            mode->time.day = 0x01;
-        else
-            mode->time.day = bcd8_inc(mode->time.day);
-        rx8025_fix_weekday(&mode->time);
-        break;
-    case 3:
-        mode->time.hour = mode->time.hour == 0x23 ? 0x00 : bcd8_inc(mode->time.hour);
-        break;
-    case 4:
-        mode->time.minute = mode->time.minute == 0x59 ? 0x00 : bcd8_inc(mode->time.minute);
-        break;
-    case 5:
-        mode->time.second = mode->time.second == 0x59 ? 0x00 : bcd8_inc(mode->time.second);
-        break;
-    }
+    rx8025_time_apply_up_operation(&mode->time, mode->progress);
     mode->cycle_begin = xTaskGetTickCount();
     mode->display_cycle = -1;
 }
 static void down_key_on_pressed(struct time_setter_mode_t *mode, enum key_state_t before)
 {
     ESP_LOGI(TAG, "down_key_on_pressed, progress = %d", mode->progress);
-    switch (mode->progress)
-    {
-    case 0:
-        mode->time.year = mode->time.year == 0x00 ? 0x99 : bcd8_dec(mode->time.year);
-        rx8025_fix_weekday(&mode->time);
-        break;
-    case 1:
-        mode->time.month = mode->time.month == 0x01 ? 0x12 : bcd8_dec(mode->time.month);
-        rx8025_fix_weekday(&mode->time);
-        break;
-    case 2:
-        if (mode->time.day == 1)
-            mode->time.day = day_in_month_bcd(mode->time.year, mode->time.month);
-        else
-            mode->time.day = bcd8_dec(mode->time.day);
-        rx8025_fix_weekday(&mode->time);
-        break;
-    case 3:
-        mode->time.hour = mode->time.hour == 0x00 ? 0x23 : bcd8_dec(mode->time.hour);
-        break;
-    case 4:
-        mode->time.minute = mode->time.minute == 0x00 ? 0x59 : bcd8_dec(mode->time.minute);
-        break;
-    case 5:
-        mode->time.second = mode->time.second == 0x00 ? 0x59 : bcd8_dec(mode->time.second);
-        break;
-    }
+    rx8025_time_apply_down_operation(&mode->time, mode->progress);
     mode->cycle_begin = xTaskGetTickCount();
     mode->display_cycle = -1;
 }
@@ -162,8 +105,6 @@ static void time_setter_on_refresh(struct time_setter_mode_t *mode)
             memset(&buf2[6], '_', 2);
             break;
         default:
-            rx8025_set_time(mode->time);
-            switch_to_homepage();
             break;
         }
     }

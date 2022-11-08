@@ -1,6 +1,6 @@
 #include "homepage_mode.h"
 #include "time_setter_mode.h"
-#include "wifi_config_mode.h"
+#include "alarm_listview_mode.h"
 #include "pin_layout.h"
 #include "oled.h"
 #include <esp_log.h>
@@ -17,7 +17,7 @@ struct homepage_mode_t
     struct base_mode_info_t base;
 };
 static struct homepage_mode_t homepage_mode = {
-    .base = {.mode_key = {.on_pressed = mode_key_on_pressed},
+    .base = {.mode_key = {.on_pressed = (key_handler_t)mode_key_on_pressed},
              .set_key = {.on_long_pressed = (key_handler_t)set_key_on_long_pressed},
              .on_refresh = (on_refresh_t)homepage_on_refresh}};
 void switch_to_homepage()
@@ -28,7 +28,7 @@ void switch_to_homepage()
 static void mode_key_on_pressed(struct homepage_mode_t *mode, enum key_state_t before)
 {
     ESP_LOGI(TAG, "mode_key_on_pressed");
-    switch_to_wifi_config();
+    switch_to_alarm_listview(0);
 }
 static void set_key_on_long_pressed(struct homepage_mode_t *mode, enum key_state_t before)
 {

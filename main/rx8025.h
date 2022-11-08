@@ -21,4 +21,8 @@ struct rx8025_time_t
 void rx8025_init();
 void rx8025_set_time(struct rx8025_time_t time);
 struct rx8025_time_t rx8025_get_time();
-void rx8025_fix_weekday(struct rx8025_time_t* time);
+void rx8025_time_fix_weekday(struct rx8025_time_t* time);
+int rx8025_time_cmp(struct rx8025_time_t x, struct rx8025_time_t y);
+struct rx8025_time_t rx8025_time_next_day(struct rx8025_time_t time);
+void rx8025_time_apply_up_operation(struct rx8025_time_t* time, int progress);
+void rx8025_time_apply_down_operation(struct rx8025_time_t* time, int progress);
