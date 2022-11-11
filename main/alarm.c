@@ -1,6 +1,8 @@
 #include "alarm.h"
 #include <string.h>
 #include <stdlib.h>
+#include <esp_log.h>
+static char TAG[] = "clock_alarm";
 struct scheduled_alarm_info_t scheduled_alarm_info;
 arraylist_of_alarm_t alarm_list;
 arraylist_of_alarm_t arraylist_of_alarm_new()
@@ -42,14 +44,7 @@ void arraylist_of_alarm_delete(arraylist_of_alarm_t *thiz)
 void reschedule_alarm(struct scheduled_alarm_info_t *dst, arraylist_of_alarm_t *arr)
 {
     struct rx8025_time_t time = rx8025_get_time();
-    struct rx8025_time_t scheduled_time = {
-        .year = 0,
-        .month = 0,
-        .day = 0,
-        .hour = 0,
-        .minute = 0,
-        .second = 0,
-    };
+    struct rx8025_time_t scheduled_time = rx8025_time_max_value();
     struct base_alarm_t *scheduled_alarm = NULL;
     for (size_t i = 0; i < arr->count; i++)
     {
@@ -65,4 +60,14 @@ void reschedule_alarm(struct scheduled_alarm_info_t *dst, arraylist_of_alarm_t *
     }
     dst->alarm = scheduled_alarm;
     dst->at = scheduled_time;
+    if (scheduled_alarm == NULL)
+    {
+        ESP_LOGI(TAG, "no alarm scheduled");
+    }
+    else
+    {
+        ESP_LOGI(TAG, "alarm scheduled at 20%02x/%02x/%02x %02x:%02x:%02x",
+                 scheduled_time.year, scheduled_time.month, scheduled_time.day,
+                 scheduled_time.hour, scheduled_time.minute, scheduled_time.second);
+    }
 }

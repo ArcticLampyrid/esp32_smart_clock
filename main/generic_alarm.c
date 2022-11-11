@@ -47,6 +47,7 @@ static struct rx8025_time_t generic_alarm_schedule(struct generic_alarm_t *thiz,
 static void generic_alarm_play(struct generic_alarm_t *thiz)
 {
     ESP_LOGI(TAG, "generic_alarm_play");
+    // TODO: implement
 }
 static void generic_alarm_switch_to_config(struct generic_alarm_t *thiz, int index)
 {

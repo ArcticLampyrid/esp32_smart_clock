@@ -108,8 +108,6 @@ static void down_key_on_pressed(struct generic_alarm_config_mode_t *mode, enum k
     mode->display_cycle = -1;
 }
 
-static char *WEEKDAY_NAMES[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-
 static void generic_alarm_config_on_refresh(struct generic_alarm_config_mode_t *mode)
 {
     // 刷新是个非常耗时的工作，尽量减小刷新次数（并且可以提高按钮响应速度）

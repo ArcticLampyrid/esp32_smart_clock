@@ -1,6 +1,7 @@
 #include "oled.h"
 #include <driver/gpio.h>
 #include <driver/spi_master.h>
+#include <driver/i2c.h>
 #include <esp_log.h>
 #include <stdbool.h>
 #include <freertos/FreeRTOS.h>
@@ -17,6 +18,9 @@
 #include "key_dispatcher.h"
 #include "rx8025.h"
 #include "alarm.h"
+#include "mp3.h"
+#include "time_zone.h"
+#include "ntp.h"
 static char TAG[] = "clock";
 void task_dispatch_for_keys(void *pvParameters)
 {
@@ -28,6 +32,8 @@ void task_dispatch_for_keys(void *pvParameters)
 }
 void app_main()
 {
+    timezone_init();
+
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
@@ -42,18 +48,32 @@ void app_main()
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pull_up_en = 1;
     io_conf.pull_down_en = 0;
-    gpio_config(&io_conf);
+    ESP_ERROR_CHECK(gpio_config(&io_conf));
+
+    i2c_config_t i2c_conf = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = I2C_SDA,
+        .scl_io_num = I2C_SCL,
+        .sda_pullup_en = GPIO_PULLUP_DISABLE, // use external pullup resistor
+        .scl_pullup_en = GPIO_PULLUP_DISABLE, // use external pullup resistor
+        .master.clk_speed = I2C_FREQ_HZ,
+    };
+    ESP_ERROR_CHECK(i2c_param_config(I2C_NUM, &i2c_conf));
+    ESP_ERROR_CHECK(i2c_driver_install(I2C_NUM, i2c_conf.mode, 0, 0, 0));
 
     alarm_list = arraylist_of_alarm_new();
     scheduled_alarm_info.alarm = NULL;
 
+    // mp3_init();
+
     wifi_init();
-    wifi_soft_ap_reset();
+    wifi_connect_by_memory();
 
     rx8025_init();
 
     oled_init();
 
+    ESP_LOGI(TAG, "welcome to use SMARTCLK");
     oled_welcome();
     vTaskDelay(pdMS_TO_TICKS(2000));
 
@@ -64,6 +84,8 @@ void app_main()
                 NULL,
                 tskIDLE_PRIORITY,
                 NULL);
+    ntp_sync_init();
+
     for (;;)
     {
         if (g_currect_mode->on_refresh)
@@ -76,6 +98,14 @@ void app_main()
                 reschedule_alarm(&scheduled_alarm_info, &alarm_list);
             }
         }
+
+        /*
+        mp3_volume_up();
+        ESP_LOGI(TAG, "mp3 number of files on tf: %d", mp3_get_number_of_files_on_tf());
+        ESP_LOGI(TAG, "mp3 volume: %d", mp3_get_volume());
+        */
+
+        vTaskDelay(10);
     }
     // ESP_LOGI(TAG, "All done!");
 }

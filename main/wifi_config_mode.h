@@ -1,5 +1,4 @@
 #pragma once
-#include "wifi_config_mode.h"
-void wifi_init();
-void wifi_soft_ap_reset();
+#include "wifi.h"
+#include "base_mode.h"
 void switch_to_wifi_config();

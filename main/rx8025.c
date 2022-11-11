@@ -1,14 +1,6 @@
 #include "rx8025.h"
-static struct rx8025_time_t mock = {
-    .year = 0x22,
-    .month = 0x11,
-    .day = 0x07,
-    .weekday = WEEKDAY_MONDAY,
-    .hour = 0x09,
-    .minute = 0x31,
-    .second = 0x22,
-};
-
+#include <driver/i2c.h>
+#include "pin_layout.h"
 static bcd8_t day_in_month_bcd(bcd8_t year2, bcd8_t month)
 {
     static bcd8_t day_in_month[12] = {0x31, 0x28, 0x31, 0x30, 0x31, 0x30, 0x31, 0x31, 0x30, 0x31, 0x30, 0x31};
@@ -20,19 +12,80 @@ static bcd8_t day_in_month_bcd(bcd8_t year2, bcd8_t month)
     return result;
 }
 
+static esp_err_t rx8025_register_read(uint8_t reg_addr, uint8_t *data, size_t len)
+{
+    return i2c_master_write_read_device(I2C_NUM, RX8025_I2C_ADDR, &reg_addr, 1, data, len, pdMS_TO_TICKS(RX8025_TIMEOUT_MS));
+}
+
+static esp_err_t rx8025_register_write_byte(uint8_t reg_addr, uint8_t data)
+{
+    esp_err_t ret;
+    uint8_t write_buf[2] = {reg_addr, data};
+    ret = i2c_master_write_to_device(I2C_NUM, RX8025_I2C_ADDR, write_buf, sizeof(write_buf), pdMS_TO_TICKS(RX8025_TIMEOUT_MS));
+    return ret;
+}
+
 void rx8025_init()
 {
-    // TODO: implement
+    /* Control register (Reg F)
+    (BIT7) CSEL1: Compensation interval Select 1
+    (BIT6) CSEL0: Compensation interval Select 0
+    (BIT5) UIE  : Update Interrupt Enable
+    (BIT4) TIE  : Timer Interrupt Enable
+    (BIT3) AIE  : Alarm Interrupt Enable
+    (BIT2) !    : <write-protected bits>
+    (BIT1) !    : <write-protected bits>
+    (BIT0) RESET: 0-Normal, 1-Stop
+    */
+    rx8025_register_write_byte(0x0F, BIT6);
+
+    /* Flag register (Reg-E)
+    (BIT7) !    : <write-protected bits>
+    (BIT6) !    : <write-protected bits>
+    (BIT5) UF   : Update Flag
+    (BIT4) TF   : Timer Flag
+    (BIT3) AF   : Alarm Flag
+    (BIT2) !    : <write-protected bits>
+    (BIT1) VLF  : Voltage Low Flag
+    (BIT0) VDET : Voltage Detection Flag
+    */
+    rx8025_register_write_byte(0x0E, 0);
+
+    /* Extension register (Reg-D)
+    (BIT7) TEST : Manufacturer's test bit
+    (BIT6) WADA : Week Alarm/Day Alarm
+    (BIT5) USEL : Update Interrupt Select
+    (BIT4) TE   : Timer Enable
+    (BIT3) FSEL1: FOUT frequency Select 1
+    (BIT2) FSEL0: FOUT frequency Select 0
+    (BIT1) TSEL1: Timer Select 1
+    (BIT0) TSEL0: Timer Select 0
+    */
+    rx8025_register_write_byte(0x0D, BIT1 | BIT6);
+
+    rx8025_set_time(rx8025_time_min_value());
 }
 void rx8025_set_time(struct rx8025_time_t time)
 {
-    // TODO: implement
-    mock = time;
+    rx8025_register_write_byte(0x06, time.year);
+    rx8025_register_write_byte(0x05, time.month);
+    rx8025_register_write_byte(0x04, time.day);
+    rx8025_register_write_byte(0x03, time.weekday);
+    rx8025_register_write_byte(0x02, time.hour);
+    rx8025_register_write_byte(0x01, time.minute);
+    rx8025_register_write_byte(0x00, time.second);
 }
 struct rx8025_time_t rx8025_get_time()
 {
-    // TODO: implement
-    return mock;
+    struct rx8025_time_t time;
+    rx8025_register_read(0x06, &time.year, 1);
+    rx8025_register_read(0x05, &time.month, 1);
+    rx8025_register_read(0x04, &time.day, 1);
+    rx8025_register_read(0x03, &time.weekday, 1);
+    rx8025_register_read(0x02, &time.hour, 1);
+    rx8025_register_read(0x01, &time.minute, 1);
+    rx8025_register_read(0x00, &time.second, 1);
+    return time;
 }
 void rx8025_time_fix_weekday(struct rx8025_time_t *time)
 {
@@ -139,4 +192,17 @@ void rx8025_time_apply_up_operation(struct rx8025_time_t *time, int progress)
         time->second = time->second == 0x00 ? 0x59 : bcd8_dec(time->second);
         break;
     }
+}
+struct rx8025_time_t rx8025_time_from_tm(struct tm *it)
+{
+    struct rx8025_time_t result = {
+        .year = uint8_to_bcd8(it->tm_year - 100),
+        .month = uint8_to_bcd8(it->tm_mon + 1),
+        .day = uint8_to_bcd8(it->tm_mday),
+        .hour = uint8_to_bcd8(it->tm_hour),
+        .minute = uint8_to_bcd8(it->tm_min),
+        .second = uint8_to_bcd8(it->tm_sec),
+    };
+    rx8025_time_fix_weekday(&result);
+    return result;
 }

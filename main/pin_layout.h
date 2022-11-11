@@ -8,3 +8,12 @@
 #define OLED_CS 5
 #define OLED_DC 32
 #define OLED_RESET 33
+#define MP3_UART_NUM UART_NUM_1
+#define MP3_TXD 10
+#define MP3_RXD 9
+#define I2C_SDA 21
+#define I2C_SCL 22
+#define I2C_NUM 0
+#define I2C_FREQ_HZ 50000
+#define RX8025_I2C_ADDR 0x32
+#define RX8025_TIMEOUT_MS 1000

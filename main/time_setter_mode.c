@@ -7,6 +7,7 @@
 #include "rx8025.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include "alarm.h"
 static char TAG[] = "clock_time_setter_mode";
 struct time_setter_mode_t;
 static void set_key_on_pressed(struct time_setter_mode_t *mode, enum key_state_t before);
@@ -44,6 +45,7 @@ static void set_key_on_pressed(struct time_setter_mode_t *mode, enum key_state_t
     if (mode->progress == 6)
     {
         rx8025_set_time(mode->time);
+        reschedule_alarm(&scheduled_alarm_info, &alarm_list);
         switch_to_homepage();
     }
 }

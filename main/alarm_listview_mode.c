@@ -90,7 +90,7 @@ static void alarm_listview_on_refresh(struct alarm_listview_mode_t *mode)
 {
     if (!alarm_listview_mode.redraw)
     {
-        vTaskDelay(0);
+        return;
     }
     alarm_listview_mode.redraw = false;
     if (mode->index >= 0 && mode->index < alarm_list.count)
