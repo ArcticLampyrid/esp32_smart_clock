@@ -11,4 +11,5 @@ struct generic_alarm_t
     bcd8_t at_minute;
     bcd8_t at_second;
     uint8_t at_weekday;
+    uint8_t bell_seq;
 };

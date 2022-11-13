@@ -64,7 +64,8 @@ void app_main()
     alarm_list = arraylist_of_alarm_new();
     scheduled_alarm_info.alarm = NULL;
 
-    // mp3_init();
+    mp3_init();
+    mp3_reset();
 
     wifi_init();
     wifi_connect_by_memory();
@@ -98,12 +99,6 @@ void app_main()
                 reschedule_alarm(&scheduled_alarm_info, &alarm_list);
             }
         }
-
-        /*
-        mp3_volume_up();
-        ESP_LOGI(TAG, "mp3 number of files on tf: %d", mp3_get_number_of_files_on_tf());
-        ESP_LOGI(TAG, "mp3 volume: %d", mp3_get_volume());
-        */
 
         vTaskDelay(10);
     }

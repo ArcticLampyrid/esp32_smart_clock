@@ -3,6 +3,8 @@
 #include <esp_log.h>
 #include "generic_alarm_config_mode.h"
 #include "generic_alarm.h"
+#include "mp3.h"
+#include "alarm_belling_mode.h"
 static char TAG[] = "generic_alarm";
 static struct rx8025_time_t generic_alarm_schedule(struct generic_alarm_t *thiz, struct rx8025_time_t prev);
 static void generic_alarm_play(struct generic_alarm_t *thiz);
@@ -19,6 +21,7 @@ struct base_alarm_t *generic_alarm_new()
     result->base.display = (alarm_switch_to_config_t)generic_alarm_display;
     result->at_hour = result->at_minute = result->at_second = 0;
     result->at_weekday = 0x7F;
+    result->bell_seq = 0;
     return (struct base_alarm_t *)result;
 }
 void generic_alarm_delete(struct base_alarm_t *dst)
@@ -47,7 +50,8 @@ static struct rx8025_time_t generic_alarm_schedule(struct generic_alarm_t *thiz,
 static void generic_alarm_play(struct generic_alarm_t *thiz)
 {
     ESP_LOGI(TAG, "generic_alarm_play");
-    // TODO: implement
+    mp3_play_specified_folder(MP3_FOLDER_GENERIC_ALARM, thiz->bell_seq);
+    switch_to_alarm_belling_mode();
 }
 static void generic_alarm_switch_to_config(struct generic_alarm_t *thiz, int index)
 {

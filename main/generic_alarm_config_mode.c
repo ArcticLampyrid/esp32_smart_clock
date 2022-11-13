@@ -43,7 +43,7 @@ static void set_key_on_pressed(struct generic_alarm_config_mode_t *mode, enum ke
     ESP_LOGI(TAG, "set_key_on_pressed, progress = %d", mode->progress);
     mode->progress++;
     mode->display_cycle = -1;
-    if (mode->progress == 10)
+    if (mode->progress == 11)
     {
         switch_to_alarm_listview(mode->index);
         reschedule_alarm(&scheduled_alarm_info, &alarm_list);
@@ -71,6 +71,9 @@ static void up_key_on_pressed(struct generic_alarm_config_mode_t *mode, enum key
     case 8:
     case 9:
         mode->alarm->at_weekday ^= (1 << (mode->progress - 3));
+        break;
+    case 10:
+        mode->alarm->bell_seq--;
         break;
     default:
         break;
@@ -101,6 +104,9 @@ static void down_key_on_pressed(struct generic_alarm_config_mode_t *mode, enum k
     case 9:
         mode->alarm->at_weekday ^= (1 << (mode->progress - 3));
         break;
+    case 10:
+        mode->alarm->bell_seq++;
+        break;
     default:
         break;
     }
@@ -116,72 +122,93 @@ static void generic_alarm_config_on_refresh(struct generic_alarm_config_mode_t *
         return;
     mode->display_cycle = currect_display_cycle;
 
-    char buf1[] = "Seq xx(EN): xx:xx:xx";
-    char buf2[] = "Re:   Sun  Mon  Tue";
-    char buf3[] = "  Wed  Thu  Fri  Sat";
-    int seq = mode->index + 1;
-    buf1[4] = (seq / 10 % 10) + '0';
-    buf1[5] = (seq % 10) + '0';
-    if (!mode->alarm->base.enabled)
+    if (mode->progress <= 9)
     {
-        buf1[7] = 'D';
-        buf1[8] = 'D';
-    }
-    bcd8_to_dchar(&buf1[12], mode->alarm->at_hour);
-    bcd8_to_dchar(&buf1[15], mode->alarm->at_minute);
-    bcd8_to_dchar(&buf1[18], mode->alarm->at_second);
-
-    buf2[5] = (mode->alarm->at_weekday & WEEKDAY_SUNDAY) ? '*' : '_';
-    buf2[10] = (mode->alarm->at_weekday & WEEKDAY_MONDAY) ? '*' : '_';
-    buf2[15] = (mode->alarm->at_weekday & WEEKDAY_TUESDAY) ? '*' : '_';
-    buf3[1] = (mode->alarm->at_weekday & WEEKDAY_WEDNESDAY) ? '*' : '_';
-    buf3[6] = (mode->alarm->at_weekday & WEEKDAY_THURSDAY) ? '*' : '_';
-    buf3[11] = (mode->alarm->at_weekday & WEEKDAY_FRIDAY) ? '*' : '_';
-    buf3[16] = (mode->alarm->at_weekday & WEEKDAY_SATURDAY) ? '*' : '_';
-
-    if (currect_display_cycle == 0)
-    {
-        switch (mode->progress)
+        char buf1[] = "Seq xx(EN): xx:xx:xx";
+        char buf2[] = "Re:   Sun  Mon  Tue";
+        char buf3[] = "  Wed  Thu  Fri  Sat";
+        int seq = mode->index + 1;
+        buf1[4] = (seq / 10 % 10) + '0';
+        buf1[5] = (seq % 10) + '0';
+        if (!mode->alarm->base.enabled)
         {
-        case 0:
-            memset(&buf1[12], '_', 2);
-            break;
-        case 1:
-            memset(&buf1[15], '_', 2);
-            break;
-        case 2:
-            memset(&buf1[18], '_', 2);
-            break;
-        case 3:
-            buf2[5] = ' ';
-            break;
-        case 4:
-            buf2[10] = ' ';
-            break;
-        case 5:
-            buf2[15] = ' ';
-            break;
-        case 6:
-            buf3[1] = ' ';
-            break;
-        case 7:
-            buf3[6] = ' ';
-            break;
-        case 8:
-            buf3[11] = ' ';
-            break;
-        case 9:
-            buf3[16] = ' ';
-            break;
-        default:
-            break;
+            buf1[7] = 'D';
+            buf1[8] = 'D';
         }
-    }
+        bcd8_to_dchar(&buf1[12], mode->alarm->at_hour);
+        bcd8_to_dchar(&buf1[15], mode->alarm->at_minute);
+        bcd8_to_dchar(&buf1[18], mode->alarm->at_second);
 
-    u8g2_ClearBuffer(&u8g2);
-    u8g2_SetFont(&u8g2, u8g2_font_helvB08_tr);
-    u8g2_DrawStr(&u8g2, 0, 12, buf1);
-    u8g2_DrawStr(&u8g2, 0, 32, buf2);
-    u8g2_DrawStr(&u8g2, 0, 52, buf3);
-    u8g2_SendBuffer(&u8g2);
+        buf2[5] = (mode->alarm->at_weekday & WEEKDAY_SUNDAY) ? '*' : '_';
+        buf2[10] = (mode->alarm->at_weekday & WEEKDAY_MONDAY) ? '*' : '_';
+        buf2[15] = (mode->alarm->at_weekday & WEEKDAY_TUESDAY) ? '*' : '_';
+        buf3[1] = (mode->alarm->at_weekday & WEEKDAY_WEDNESDAY) ? '*' : '_';
+        buf3[6] = (mode->alarm->at_weekday & WEEKDAY_THURSDAY) ? '*' : '_';
+        buf3[11] = (mode->alarm->at_weekday & WEEKDAY_FRIDAY) ? '*' : '_';
+        buf3[16] = (mode->alarm->at_weekday & WEEKDAY_SATURDAY) ? '*' : '_';
+
+        if (currect_display_cycle == 0)
+        {
+            switch (mode->progress)
+            {
+            case 0:
+                memset(&buf1[12], '_', 2);
+                break;
+            case 1:
+                memset(&buf1[15], '_', 2);
+                break;
+            case 2:
+                memset(&buf1[18], '_', 2);
+                break;
+            case 3:
+                buf2[5] = ' ';
+                break;
+            case 4:
+                buf2[10] = ' ';
+                break;
+            case 5:
+                buf2[15] = ' ';
+                break;
+            case 6:
+                buf3[1] = ' ';
+                break;
+            case 7:
+                buf3[6] = ' ';
+                break;
+            case 8:
+                buf3[11] = ' ';
+                break;
+            case 9:
+                buf3[16] = ' ';
+                break;
+            default:
+                break;
+            }
+        }
+
+        u8g2_ClearBuffer(&u8g2);
+        u8g2_SetFont(&u8g2, u8g2_font_helvB08_tr);
+        u8g2_DrawStr(&u8g2, 0, 12, buf1);
+        u8g2_DrawStr(&u8g2, 0, 32, buf2);
+        u8g2_DrawStr(&u8g2, 0, 52, buf3);
+        u8g2_SendBuffer(&u8g2);
+    }
+    else
+    {
+
+        char buf2[16];
+        u8g2_ClearBuffer(&u8g2);
+        u8g2_SetFont(&u8g2, u8g2_font_helvB08_tr);
+        u8g2_DrawStr(&u8g2, 0, 12, "Bell Seq:");
+        if (currect_display_cycle == 0)
+        {
+            u8g2_DrawStr(&u8g2, 0, 32, "___");
+        }
+        else
+        {
+            utoa(mode->alarm->bell_seq, buf2, 10);
+            u8g2_DrawStr(&u8g2, 0, 32, buf2);
+        }
+        u8g2_SendBuffer(&u8g2);
+    }
 }

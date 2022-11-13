@@ -57,7 +57,7 @@ void mp3_receive_task(void *pvParameters)
 
         uint8_t command = buffer[3];
         uint16_t argument = buffer[5] << 8 | buffer[6];
-        ESP_LOGI(TAG, "command: %d, argument: %d", command, argument);
+        ESP_LOGD(TAG, "command: 0x%x, argument: 0x%x", command, argument);
 
         switch (command)
         {
@@ -98,10 +98,11 @@ void mp3_init()
                 NULL);
 }
 
-static void mp3_cmd_no_wait(uint8_t command, uint16_t argument)
+static void mp3_cmd_no_wait(uint8_t command, uint16_t argument, bool ack)
 {
     uint8_t buffer[] = {0x7E, 0xFF, 0x06, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0xEF};
     buffer[3] = command;
+    buffer[4] = ack ? 1 : 0;
     buffer[5] = (uint8_t)(argument >> 8);
     buffer[6] = (uint8_t)(argument & 0xFF);
     uint16_t sum = 0;
@@ -115,17 +116,16 @@ static void mp3_cmd_no_wait(uint8_t command, uint16_t argument)
     uart_write_bytes(MP3_UART_NUM, buffer, sizeof(buffer));
     uart_wait_tx_done(MP3_UART_NUM, portMAX_DELAY);
 }
-bool mp3_cmd(uint8_t command, uint16_t argument)
+static bool mp3_cmd(uint8_t command, uint16_t argument, bool ack)
 {
-    // FIXME
     TickType_t begin = xTaskGetTickCount();
     uint32_t cmd_count = mp3_state.received_cmd_count;
-    mp3_cmd_no_wait(command, argument);
+    mp3_cmd_no_wait(command, argument, ack);
     while (mp3_state.received_cmd_count == cmd_count)
     {
         if (xTaskGetTickCount() - begin > pdMS_TO_TICKS(1000))
         {
-            ESP_LOGI(TAG, "mp3_cmd timeout");
+            ESP_LOGW(TAG, "mp3_cmd timeout");
             return false;
         }
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -134,21 +134,31 @@ bool mp3_cmd(uint8_t command, uint16_t argument)
 }
 uint16_t mp3_get_volume()
 {
-    // FIXME
-    mp3_cmd(0x43, 0);
+    mp3_cmd(0x43, 0, false);
     return mp3_state.volume;
 }
 uint16_t mp3_get_number_of_files_on_tf()
 {
-    // FIXME
-    mp3_cmd(0x48, 0);
+    mp3_cmd(0x48, 0, false);
     return mp3_state.number_of_files_on_tf;
 }
 void mp3_volume_up()
 {
-    mp3_cmd(0x04, 0);
+    mp3_cmd(0x04, 0, true);
 }
 void mp3_volume_down()
 {
-    mp3_cmd(0x05, 0);
+    mp3_cmd(0x05, 0, true);
+}
+void mp3_play_specified_folder(uint8_t folder_seq, uint8_t file_seq)
+{
+    mp3_cmd(0x0F, (uint16_t)folder_seq << 8 | (uint16_t)file_seq, true);
+}
+void mp3_reset()
+{
+    mp3_cmd(0x0C, 0, false);
+}
+void mp3_stop()
+{
+    mp3_cmd(0x16, 0, true);
 }
