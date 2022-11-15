@@ -5,6 +5,9 @@
 #include "generic_alarm.h"
 #include "mp3.h"
 #include "alarm_belling_mode.h"
+#include "weather.h"
+#include "weather_speech.h"
+#define MP3_FOLDER_GENERIC_ALARM 1
 static char TAG[] = "generic_alarm";
 static struct rx8025_time_t generic_alarm_schedule(struct generic_alarm_t *thiz, struct rx8025_time_t prev);
 static void generic_alarm_play(struct generic_alarm_t *thiz);
@@ -50,8 +53,17 @@ static struct rx8025_time_t generic_alarm_schedule(struct generic_alarm_t *thiz,
 static void generic_alarm_play(struct generic_alarm_t *thiz)
 {
     ESP_LOGI(TAG, "generic_alarm_play");
-    mp3_play_specified_folder(MP3_FOLDER_GENERIC_ALARM, thiz->bell_seq);
-    switch_to_alarm_belling_mode();
+    if (thiz->bell_seq != 0)
+    {
+        // Normal alarm
+        mp3_play_specified_folder(MP3_FOLDER_GENERIC_ALARM, thiz->bell_seq);
+        switch_to_alarm_belling_mode();
+    }
+    else
+    {
+        // Weather reporter
+        update_and_speak_weather_async();
+    }
 }
 static void generic_alarm_switch_to_config(struct generic_alarm_t *thiz, int index)
 {

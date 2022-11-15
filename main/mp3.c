@@ -162,3 +162,8 @@ void mp3_stop()
 {
     mp3_cmd(0x16, 0, true);
 }
+void mp3_wait_for_completion()
+{
+    // FIXME
+    vTaskDelay(pdMS_TO_TICKS(1000));
+}

@@ -206,8 +206,15 @@ static void generic_alarm_config_on_refresh(struct generic_alarm_config_mode_t *
         }
         else
         {
-            utoa(mode->alarm->bell_seq, buf2, 10);
-            u8g2_DrawStr(&u8g2, 0, 32, buf2);
+            if (mode->alarm->bell_seq == 0)
+            {
+                u8g2_DrawStr(&u8g2, 0, 32, "0: Weather");
+            }
+            else
+            {
+                utoa(mode->alarm->bell_seq, buf2, 10);
+                u8g2_DrawStr(&u8g2, 0, 32, buf2);
+            }
         }
         u8g2_SendBuffer(&u8g2);
     }
