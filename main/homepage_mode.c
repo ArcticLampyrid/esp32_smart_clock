@@ -1,6 +1,6 @@
 #include "homepage_mode.h"
 #include "time_setter_mode.h"
-#include "alarm_listview_mode.h"
+#include "weather_mode.h"
 #include "pin_layout.h"
 #include "oled.h"
 #include <esp_log.h>
@@ -28,7 +28,7 @@ void switch_to_homepage()
 static void mode_key_on_pressed(struct homepage_mode_t *mode, enum key_state_t before)
 {
     ESP_LOGI(TAG, "mode_key_on_pressed");
-    switch_to_alarm_listview(0);
+    switch_to_weather();
 }
 static void set_key_on_long_pressed(struct homepage_mode_t *mode, enum key_state_t before)
 {

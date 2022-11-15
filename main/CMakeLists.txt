@@ -1,2 +1,2 @@
-idf_component_register(SRCS "ntp_sync_config_mode.c" "ntp.c" "time_zone.c" "wifi.c" "mp3.c" "generic_alarm_config_mode.c" "alarm_controller_mode.c" "alarm_listview_mode.c" "generic_alarm.c" "alarm_belling_mode.c" "alarm.c" "wifi_config_mode.c" "time_setter_mode.c" "rx8025.c" "key_dispatcher.c" "homepage_mode.c" "oled.c" "base_mode.c" "main.c"
+idf_component_register(SRCS "weather_mode.c" "weather.c" "ntp_sync_config_mode.c" "ntp.c" "time_zone.c" "wifi.c" "mp3.c" "generic_alarm_config_mode.c" "alarm_controller_mode.c" "alarm_listview_mode.c" "generic_alarm.c" "alarm_belling_mode.c" "alarm.c" "wifi_config_mode.c" "time_setter_mode.c" "rx8025.c" "key_dispatcher.c" "homepage_mode.c" "oled.c" "base_mode.c" "main.c"
                     INCLUDE_DIRS ".")

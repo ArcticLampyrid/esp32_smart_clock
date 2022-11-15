@@ -67,6 +67,7 @@ static void set_key_on_pressed(struct ntp_sync_config_mode_t *mode, enum key_sta
     ESP_LOGI(TAG, "set_key_on_pressed, progress = %d", mode->progress);
     if (mode->progress == -1)
     {
+        ntp_request_sync();
         return;
     }
     mode->progress++;
@@ -130,15 +131,15 @@ static void ntp_sync_config_on_refresh(struct ntp_sync_config_mode_t *mode)
     {
         strcat(buf1, mode->enabled ? "__" : "___");
     }
-    char buf2[] = "Timezone:";
-    char buf3[32] = "";
+    char buf2[32] = "Timezone: ";
+    char buf3[] = "Press SET to sync immed";
     if (currect_display_cycle != 0 || mode->progress != 1)
     {
-        strcat(buf3, TIME_ZONE_NAMES[mode->time_zone_id]);
+        strcat(buf2, TIME_ZONE_NAMES[mode->time_zone_id]);
     }
     else
     {
-        strcat(buf3, "___");
+        strcat(buf2, "___");
     }
     u8g2_ClearBuffer(&u8g2);
     u8g2_SetFont(&u8g2, u8g2_font_helvB08_tr);

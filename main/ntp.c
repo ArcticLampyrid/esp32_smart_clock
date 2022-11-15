@@ -55,3 +55,7 @@ void ntp_sync_set_enabled(bool enabled)
         ESP_LOGI(TAG, "ntp_sync_enabled = %u", (uint8_t)enabled);
     }
 }
+void ntp_request_sync()
+{
+    sntp_restart();
+}

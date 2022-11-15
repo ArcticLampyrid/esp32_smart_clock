@@ -39,3 +39,4 @@ inline bcd8_t bcd8_dec(bcd8_t x)
     }
     return result;
 }
+#define MAKE_BCD8_HF(h, l) (((bcd8_t)(h)) << 4 | ((bcd8_t)(l)))

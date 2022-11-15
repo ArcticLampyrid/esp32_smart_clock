@@ -81,7 +81,7 @@ void app_main()
     switch_to_homepage();
     xTaskCreate(task_dispatch_for_keys,
                 "task_dispatch_for_keys",
-                2000,
+                8192,
                 NULL,
                 tskIDLE_PRIORITY,
                 NULL);
