@@ -32,6 +32,7 @@ void task_dispatch_for_keys(void *pvParameters)
 }
 void app_main()
 {
+    gpio_install_isr_service(0);
     timezone_init();
 
     esp_err_t ret = nvs_flash_init();
@@ -44,10 +45,10 @@ void app_main()
 
     gpio_config_t io_conf;
     io_conf.intr_type = GPIO_INTR_DISABLE;
-    io_conf.pin_bit_mask = (1ull << GPIO_MODE_KEY) + (1ull << GPIO_SET_KEY) + (1ull << GPIO_UP_KEY) + (1ull << GPIO_DOWN_KEY);
+    io_conf.pin_bit_mask = (1ull << GPIO_MODE_KEY) | (1ull << GPIO_SET_KEY) | (1ull << GPIO_UP_KEY) | (1ull << GPIO_DOWN_KEY);
     io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pull_up_en = 1;
-    io_conf.pull_down_en = 0;
+    io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
     ESP_ERROR_CHECK(gpio_config(&io_conf));
 
     i2c_config_t i2c_conf = {

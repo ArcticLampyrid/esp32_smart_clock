@@ -55,7 +55,7 @@ static bool string_starts_with(const char *x, const char *y)
 static void speak_weather_file_seq(uint8_t seq)
 {
     mp3_play_specified_folder(MP3_FOLDER_WEATHER, seq);
-    mp3_wait_for_completion();
+    mp3_wait_for_idle();
 }
 void speak_weather_text(const char *text)
 {

@@ -1,21 +1,26 @@
 #include "mp3.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-#include "driver/uart.h"
+#include <freertos/event_groups.h>
+#include <freertos/queue.h>
+#include <driver/uart.h>
+#include <driver/gpio.h>
 #include <esp_log.h>
 #include "pin_layout.h"
 #include <stddef.h>
-volatile struct
+static volatile struct
 {
     uint32_t received_cmd_count;
     uint16_t number_of_files_on_tf;
     uint16_t volume;
+    EventGroupHandle_t event_group;
+    QueueHandle_t queue;
 } mp3_state;
+static const int EVENT_IDLE_BIT = BIT0;
+static const int EVENT_BUSY_PORT_CHANGED_BIT = BIT1;
 static char TAG[] = "MP3";
-void mp3_receive_task(void *pvParameters)
+static void mp3_receive_task(void *pvParameters)
 {
-    // FIXME
-    mp3_state.received_cmd_count = 0;
     uint8_t buffer[10];
     uint8_t buffer_size = 10;
     for (;;)
@@ -77,8 +82,37 @@ void mp3_receive_task(void *pvParameters)
     }
 }
 
+static void mp3_busy_isr_handler(void *arg)
+{
+    BaseType_t xHigherPriorityTaskWoken, xResult;
+    xHigherPriorityTaskWoken = pdFALSE;
+    xResult = xEventGroupSetBitsFromISR(mp3_state.event_group, EVENT_BUSY_PORT_CHANGED_BIT, &xHigherPriorityTaskWoken);
+    if (xResult == pdPASS)
+    {
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
+}
+
+static void mp3_from_isr_task(void *arg)
+{
+    for (;;)
+    {
+        xEventGroupWaitBits(mp3_state.event_group, EVENT_BUSY_PORT_CHANGED_BIT, pdFALSE, pdFALSE, portMAX_DELAY);
+        if (gpio_get_level(MP3_BUSY) == 0)
+        {
+            xEventGroupClearBits(mp3_state.event_group, EVENT_IDLE_BIT);
+        }
+        else
+        {
+            xEventGroupSetBits(mp3_state.event_group, EVENT_IDLE_BIT);
+        }
+    }
+}
+
 void mp3_init()
 {
+    mp3_state.event_group = xEventGroupCreate();
+    mp3_state.received_cmd_count = 0;
     uart_config_t uart_config = {
         .baud_rate = 9600,
         .data_bits = UART_DATA_8_BITS,
@@ -94,8 +128,30 @@ void mp3_init()
                 "mp3_receive_task",
                 2000,
                 NULL,
-                tskIDLE_PRIORITY,
+                tskIDLE_PRIORITY + 3,
                 NULL);
+    xTaskCreate(mp3_from_isr_task,
+                "mp3_from_isr_task",
+                2000,
+                NULL,
+                tskIDLE_PRIORITY + 3,
+                NULL);
+    gpio_config_t io_conf = {};
+    io_conf.pin_bit_mask = (1ull << MP3_BUSY);
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+    io_conf.intr_type = GPIO_INTR_ANYEDGE;
+    ESP_ERROR_CHECK(gpio_config(&io_conf));
+    ESP_ERROR_CHECK(gpio_isr_handler_add(MP3_BUSY, &mp3_busy_isr_handler, NULL));
+    if (gpio_get_level(MP3_BUSY) == 0)
+    {
+        xEventGroupClearBits(mp3_state.event_group, EVENT_IDLE_BIT);
+    }
+    else
+    {
+        xEventGroupSetBits(mp3_state.event_group, EVENT_IDLE_BIT);
+    }
 }
 
 static void mp3_cmd_no_wait(uint8_t command, uint16_t argument, bool ack)
@@ -162,8 +218,12 @@ void mp3_stop()
 {
     mp3_cmd(0x16, 0, true);
 }
-void mp3_wait_for_completion()
+bool mp3_is_idle()
 {
-    // FIXME
-    vTaskDelay(pdMS_TO_TICKS(1000));
+    return (xEventGroupGetBits(mp3_state.event_group) & EVENT_IDLE_BIT) != 0;
+}
+void mp3_wait_for_idle()
+{
+    // vTaskDelay(pdMS_TO_TICKS(1000));
+    xEventGroupWaitBits(mp3_state.event_group, EVENT_IDLE_BIT, pdFALSE, pdFALSE, portMAX_DELAY);
 }
