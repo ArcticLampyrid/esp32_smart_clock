@@ -59,6 +59,8 @@ static void speak_weather_file_seq(uint8_t seq)
 }
 void speak_weather_text(const char *text)
 {
+    if (text == NULL)
+        return;
     size_t pos = 0;
     while (pos[text] != '\0')
     {
