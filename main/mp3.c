@@ -97,7 +97,7 @@ static void mp3_from_isr_task(void *arg)
 {
     for (;;)
     {
-        xEventGroupWaitBits(mp3_state.event_group, EVENT_BUSY_PORT_CHANGED_BIT, pdFALSE, pdFALSE, portMAX_DELAY);
+        xEventGroupWaitBits(mp3_state.event_group, EVENT_BUSY_PORT_CHANGED_BIT, pdFALSE, pdTRUE, portMAX_DELAY);
         if (gpio_get_level(MP3_BUSY) == 0)
         {
             xEventGroupClearBits(mp3_state.event_group, EVENT_IDLE_BIT);
@@ -128,13 +128,13 @@ void mp3_init()
                 "mp3_receive_task",
                 2000,
                 NULL,
-                tskIDLE_PRIORITY + 3,
+                tskIDLE_PRIORITY,
                 NULL);
     xTaskCreate(mp3_from_isr_task,
                 "mp3_from_isr_task",
                 2000,
                 NULL,
-                tskIDLE_PRIORITY + 3,
+                tskIDLE_PRIORITY,
                 NULL);
     gpio_config_t io_conf = {};
     io_conf.pin_bit_mask = (1ull << MP3_BUSY);
