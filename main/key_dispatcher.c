@@ -3,6 +3,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <esp_log.h>
+#include "buzzer.h"
 static char TAG[] = "clock_key_dispatcher";
 struct key_state_info_t
 {
@@ -55,6 +56,7 @@ void dispatch_for_keys()
         bool gpio_state = gpio_get_level(key->gpio_num);
         if (key->state == KEY_STATE_RELEASED && gpio_state == 0)
         {
+            buzzer_beep();
             key->state = KEY_STATE_PRESSED;
             key->mode_at_last_pressed = g_currect_mode;
             key->at_last_pressed = xTaskGetTickCount();
@@ -76,8 +78,9 @@ void dispatch_for_keys()
         }
         else if (key->state == KEY_STATE_PRESSED && gpio_state == 0)
         {
-            if (xTaskGetTickCount() - key->at_last_pressed >= pdMS_TO_TICKS(3000))
+            if (xTaskGetTickCount() - key->at_last_pressed >= pdMS_TO_TICKS(2000))
             {
+                buzzer_beep();
                 struct base_mode_info_t *mode = key->mode_at_last_pressed;
                 struct key_handler_group_t *handler = get_handler_group(mode, key);
                 key->state = KEY_STATE_LONG_PRESSED;

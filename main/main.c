@@ -21,7 +21,7 @@
 #include "mp3.h"
 #include "time_zone.h"
 #include "ntp.h"
-#include "weather_speech.h"
+#include "buzzer.h"
 static char TAG[] = "clock";
 void task_dispatch_for_keys(void *pvParameters)
 {
@@ -33,6 +33,7 @@ void task_dispatch_for_keys(void *pvParameters)
 }
 void app_main()
 {
+    buzzer_init();
     timezone_init();
 
     esp_err_t ret = nvs_flash_init();
