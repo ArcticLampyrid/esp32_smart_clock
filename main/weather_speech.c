@@ -54,17 +54,18 @@ static bool string_starts_with(const char *x, const char *y)
 }
 static void speak_weather_file_seq(uint8_t seq)
 {
+    mp3_clear_play_completed();
     mp3_play_specified_folder(MP3_FOLDER_WEATHER, seq);
-    mp3_wait_for_idle();
+    mp3_wait_for_play_completed(portMAX_DELAY);
 }
 void speak_weather_text(const char *text)
 {
     if (text == NULL)
         return;
     size_t pos = 0;
-    while (pos[text] != '\0')
+    while (text[pos] != '\0')
     {
-        if (string_starts_with(text, "转"))
+        if (string_starts_with(text + pos, "转"))
         {
             speak_weather_file_seq(MP3_WEATHER_SPEECH_TRANSFORM_TO);
             pos += strlen("转");

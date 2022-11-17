@@ -14,10 +14,8 @@ static volatile struct
     uint16_t number_of_files_on_tf;
     uint16_t volume;
     EventGroupHandle_t event_group;
-    QueueHandle_t queue;
 } mp3_state;
-static const int EVENT_IDLE_BIT = BIT0;
-static const int EVENT_BUSY_PORT_CHANGED_BIT = BIT1;
+static const int EVENT_PLAY_COMPLETED_BIT = BIT0;
 static char TAG[] = "MP3";
 static void mp3_receive_task(void *pvParameters)
 {
@@ -62,10 +60,15 @@ static void mp3_receive_task(void *pvParameters)
 
         uint8_t command = buffer[3];
         uint16_t argument = buffer[5] << 8 | buffer[6];
-        ESP_LOGD(TAG, "command: 0x%x, argument: 0x%x", command, argument);
+        ESP_LOGI(TAG, "recv, command: 0x%x, argument: 0x%x", command, argument);
 
         switch (command)
         {
+        case 0x3C:
+        case 0x3D:
+        case 0x3E:
+            xEventGroupSetBits(mp3_state.event_group, EVENT_PLAY_COMPLETED_BIT);
+            break;
         case 0x43:
             mp3_state.volume = argument;
             break;
@@ -79,33 +82,6 @@ static void mp3_receive_task(void *pvParameters)
 
         // inc the count after refreshing the state
         mp3_state.received_cmd_count++;
-    }
-}
-
-static void mp3_busy_isr_handler(void *arg)
-{
-    BaseType_t xHigherPriorityTaskWoken, xResult;
-    xHigherPriorityTaskWoken = pdFALSE;
-    xResult = xEventGroupSetBitsFromISR(mp3_state.event_group, EVENT_BUSY_PORT_CHANGED_BIT, &xHigherPriorityTaskWoken);
-    if (xResult == pdPASS)
-    {
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    }
-}
-
-static void mp3_from_isr_task(void *arg)
-{
-    for (;;)
-    {
-        xEventGroupWaitBits(mp3_state.event_group, EVENT_BUSY_PORT_CHANGED_BIT, pdFALSE, pdTRUE, portMAX_DELAY);
-        if (gpio_get_level(MP3_BUSY) == 0)
-        {
-            xEventGroupClearBits(mp3_state.event_group, EVENT_IDLE_BIT);
-        }
-        else
-        {
-            xEventGroupSetBits(mp3_state.event_group, EVENT_IDLE_BIT);
-        }
     }
 }
 
@@ -128,30 +104,15 @@ void mp3_init()
                 "mp3_receive_task",
                 2000,
                 NULL,
-                tskIDLE_PRIORITY,
-                NULL);
-    xTaskCreate(mp3_from_isr_task,
-                "mp3_from_isr_task",
-                2000,
-                NULL,
-                tskIDLE_PRIORITY,
+                tskIDLE_PRIORITY + 3,
                 NULL);
     gpio_config_t io_conf = {};
     io_conf.pin_bit_mask = (1ull << MP3_BUSY);
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
     io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    io_conf.intr_type = GPIO_INTR_ANYEDGE;
+    io_conf.intr_type = GPIO_INTR_DISABLE;
     ESP_ERROR_CHECK(gpio_config(&io_conf));
-    ESP_ERROR_CHECK(gpio_isr_handler_add(MP3_BUSY, &mp3_busy_isr_handler, NULL));
-    if (gpio_get_level(MP3_BUSY) == 0)
-    {
-        xEventGroupClearBits(mp3_state.event_group, EVENT_IDLE_BIT);
-    }
-    else
-    {
-        xEventGroupSetBits(mp3_state.event_group, EVENT_IDLE_BIT);
-    }
 }
 
 static void mp3_cmd_no_wait(uint8_t command, uint16_t argument, bool ack)
@@ -171,6 +132,7 @@ static void mp3_cmd_no_wait(uint8_t command, uint16_t argument, bool ack)
     buffer[8] = (uint8_t)(sum & 0xFF);
     uart_write_bytes(MP3_UART_NUM, buffer, sizeof(buffer));
     uart_wait_tx_done(MP3_UART_NUM, portMAX_DELAY);
+    ESP_LOGI(TAG, "send, command: 0x%x, argument: 0x%x", command, argument);
 }
 static bool mp3_cmd(uint8_t command, uint16_t argument, bool ack)
 {
@@ -220,10 +182,13 @@ void mp3_stop()
 }
 bool mp3_is_idle()
 {
-    return (xEventGroupGetBits(mp3_state.event_group) & EVENT_IDLE_BIT) != 0;
+    return gpio_get_level(MP3_BUSY) != 0;
 }
-void mp3_wait_for_idle()
+void mp3_clear_play_completed()
 {
-    // vTaskDelay(pdMS_TO_TICKS(1000));
-    xEventGroupWaitBits(mp3_state.event_group, EVENT_IDLE_BIT, pdFALSE, pdFALSE, portMAX_DELAY);
+    xEventGroupClearBits(mp3_state.event_group, EVENT_PLAY_COMPLETED_BIT);
+}
+void mp3_wait_for_play_completed(TickType_t xTicksToWait)
+{
+    xEventGroupWaitBits(mp3_state.event_group, EVENT_PLAY_COMPLETED_BIT, pdFALSE, pdFALSE, xTicksToWait);
 }

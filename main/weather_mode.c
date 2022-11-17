@@ -9,11 +9,9 @@
 static char TAG[] = "clock_weather_mode";
 struct weather_mode_t;
 static void mode_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before);
-static void up_key_on_released(struct weather_mode_t *mode, enum key_state_t before);
-static void down_key_on_released(struct weather_mode_t *mode, enum key_state_t before);
-static void set_key_on_long_pressed(struct weather_mode_t *mode, enum key_state_t before);
-static void up_key_on_long_pressed(struct weather_mode_t *mode, enum key_state_t before);
-static void down_key_on_long_pressed(struct weather_mode_t *mode, enum key_state_t before);
+static void up_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before);
+static void down_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before);
+static void set_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before);
 static void weather_on_refresh(struct weather_mode_t *mode);
 
 struct weather_mode_t
@@ -23,15 +21,9 @@ struct weather_mode_t
 };
 static struct weather_mode_t weather_mode = {
     .base = {.mode_key = {.on_pressed = (key_handler_t)mode_key_on_pressed},
-             .set_key = {.on_long_pressed = (key_handler_t)set_key_on_long_pressed},
-             .up_key = {
-                 .on_long_pressed = (key_handler_t)up_key_on_long_pressed,
-                 .on_released = (key_handler_t)up_key_on_released,
-             },
-             .down_key = {
-                 .on_long_pressed = (key_handler_t)down_key_on_long_pressed,
-                 .on_released = (key_handler_t)down_key_on_released,
-             },
+             .set_key = {.on_pressed = (key_handler_t)set_key_on_pressed},
+             .up_key = {.on_pressed = (key_handler_t)up_key_on_pressed},
+             .down_key = {.on_pressed = (key_handler_t)down_key_on_pressed},
              .on_refresh = (on_refresh_t)weather_on_refresh}};
 void switch_to_weather()
 {
@@ -44,38 +36,23 @@ static void mode_key_on_pressed(struct weather_mode_t *mode, enum key_state_t be
     ESP_LOGI(TAG, "mode_key_on_pressed");
     switch_to_alarm_listview(0);
 }
-static void up_key_on_released(struct weather_mode_t *mode, enum key_state_t before)
+static void up_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before)
 {
-    if (before == KEY_STATE_PRESSED)
-    {
-        ESP_LOGI(TAG, "weather of prev day");
-        mode->index = g_weather_info.num_of_days == 0
-                          ? 0
-                          : (mode->index + g_weather_info.num_of_days - 1) % g_weather_info.num_of_days;
-    }
+    ESP_LOGI(TAG, "weather of prev day");
+    mode->index = g_weather_info.num_of_days == 0
+                      ? 0
+                      : (mode->index + g_weather_info.num_of_days - 1) % g_weather_info.num_of_days;
 }
-static void down_key_on_released(struct weather_mode_t *mode, enum key_state_t before)
+static void down_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before)
 {
-    if (before == KEY_STATE_PRESSED)
-    {
-        ESP_LOGI(TAG, "weather of next day");
-        mode->index = g_weather_info.num_of_days == 0
-                          ? 0
-                          : (mode->index + 1) % g_weather_info.num_of_days;
-    }
+    ESP_LOGI(TAG, "weather of next day");
+    mode->index = g_weather_info.num_of_days == 0
+                      ? 0
+                      : (mode->index + 1) % g_weather_info.num_of_days;
 }
-static void set_key_on_long_pressed(struct weather_mode_t *mode, enum key_state_t before)
+static void set_key_on_pressed(struct weather_mode_t *mode, enum key_state_t before)
 {
-    ESP_LOGI(TAG, "set_key_on_long_pressed");
-}
-static void up_key_on_long_pressed(struct weather_mode_t *mode, enum key_state_t before)
-{
-    ESP_LOGI(TAG, "up_key_on_long_pressed");
-    weather_update(&g_weather_info);
-}
-static void down_key_on_long_pressed(struct weather_mode_t *mode, enum key_state_t before)
-{
-    ESP_LOGI(TAG, "down_key_on_long_pressed");
+    ESP_LOGI(TAG, "set_key_on_pressed");
     weather_update(&g_weather_info);
 }
 
@@ -92,7 +69,7 @@ static void weather_on_refresh(struct weather_mode_t *mode)
             weather_of_day->day,
             weather_of_day->weather);
     u8g2_DrawUTF8(&u8g2, 0, 28, buf);
-        sprintf(buf, "Tmp: %d℃~%d℃",
+    sprintf(buf, "Tmp: %d℃~%d℃",
             weather_of_day->temperature_of_day,
             weather_of_day->temperature_of_night);
     u8g2_DrawUTF8(&u8g2, 0, 44, buf);
