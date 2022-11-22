@@ -45,7 +45,10 @@ static void homepage_on_refresh(struct homepage_mode_t *mode)
     bcd8_to_dchar(&buf1[2], time.year);
     bcd8_to_dchar(&buf1[5], time.month);
     bcd8_to_dchar(&buf1[8], time.day);
-    memcpy(&buf1[11], WEEKDAY_NAMES[__builtin_ctz(time.weekday)], 3);
+    int weekday_index = __builtin_ctz(time.weekday);
+    if(weekday_index < 0 || weekday_index >= sizeof(WEEKDAY_NAMES))
+        weekday_index = 0; // fallback
+    memcpy(&buf1[11], WEEKDAY_NAMES[weekday_index], 3);
     bcd8_to_dchar(&buf2[0], time.hour);
     bcd8_to_dchar(&buf2[3], time.minute);
     bcd8_to_dchar(&buf2[6], time.second);

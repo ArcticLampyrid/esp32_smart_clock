@@ -71,7 +71,7 @@ static void down_key_on_pressed(struct alarm_controller_mode_t *mode, enum key_s
 static void alarm_controller_on_refresh(struct alarm_controller_mode_t *mode)
 {
     u8g2_ClearBuffer(&u8g2);
-    u8g2_SetFont(&u8g2, u8g2_font_ncenB10_tr);
+    u8g2_SetFont(&u8g2, u8g2_font_ncenB08_tr);
     u8g2_DrawStr(&u8g2, 20, 12, "Add alarm");
     u8g2_DrawStr(&u8g2, 20, 32, "Add hourly chime");
     u8g2_DrawStr(&u8g2, 20, 52, "Return");
