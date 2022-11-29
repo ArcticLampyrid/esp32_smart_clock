@@ -64,14 +64,14 @@ static void weather_on_refresh(struct weather_mode_t *mode)
     sprintf(buf, "City: %s", g_weather_info.city);
     u8g2_DrawUTF8(&u8g2, 0, 12, buf);
     const weather_of_day_t *weather_of_day = &g_weather_info.data[mode->index];
-    sprintf(buf, "Day %02x-%02x: %s",
+    sprintf(buf, "Day %02x-%02x: %d℃~%d℃",
             weather_of_day->month,
             weather_of_day->day,
-            weather_of_day->weather);
-    u8g2_DrawUTF8(&u8g2, 0, 28, buf);
-    sprintf(buf, "Tmp: %d℃~%d℃",
             weather_of_day->temperature_of_day,
             weather_of_day->temperature_of_night);
+    u8g2_DrawUTF8(&u8g2, 0, 28, buf);
+    sprintf(buf, "%s",
+            weather_of_day->weather);
     u8g2_DrawUTF8(&u8g2, 0, 44, buf);
     sprintf(buf, "(20%02x-%02x-%02x %02x:%02x:%02x)",
             g_weather_info.updated_at.year,

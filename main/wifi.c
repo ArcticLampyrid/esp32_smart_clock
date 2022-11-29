@@ -16,7 +16,6 @@
 struct wifi_state_t wifi_state = {
     .smart_config_started = false,
 };
-static char STORAGE_NAMESPACE[] = "clock";
 static char TAG[] = "clock_wifi";
 
 static const int ESPTOUCH_DONE_BIT = BIT1;
@@ -92,37 +91,14 @@ void wifi_connect(char *ssid, char *password)
     strcpy((char *)wifi_config.sta.password, password);
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_connect());
-
-    nvs_handle_t nvs_handle;
-    if (nvs_open(STORAGE_NAMESPACE, NVS_READWRITE, &nvs_handle) == ESP_OK)
-    {
-        nvs_set_str(nvs_handle, "wifi_ssid", ssid);
-        nvs_set_str(nvs_handle, "wifi_pwd", password);
-        nvs_commit(nvs_handle);
-        nvs_close(nvs_handle);
-        ESP_LOGI(TAG, "WiFi info saved, ssid: %s, password: %s", ssid, password);
-    }
 }
 
 void wifi_connect_by_memory()
 {
-    nvs_handle_t nvs_handle;
-    if (nvs_open(STORAGE_NAMESPACE, NVS_READONLY, &nvs_handle) == ESP_OK)
+    wifi_config_t wifi_config;
+    esp_wifi_get_config(WIFI_IF_STA, &wifi_config);
+    if (strlen((const char *)wifi_config.sta.ssid) != 0)
     {
-        char ssid[33];
-        char password[65];
-        size_t len;
-
-        len = 33;
-        if (nvs_get_str(nvs_handle, "wifi_ssid", ssid, &len) == ESP_OK)
-        {
-            len = 65;
-            if (nvs_get_str(nvs_handle, "wifi_pwd", password, &len) == ESP_OK)
-            {
-                nvs_close(nvs_handle);
-                ESP_LOGI(TAG, "WiFi info fetched, ssid: %s, password: %s", ssid, password);
-                wifi_connect(ssid, password);
-            }
-        }
+        esp_wifi_connect();
     }
 }
