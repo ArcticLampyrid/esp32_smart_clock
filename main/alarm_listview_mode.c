@@ -32,7 +32,10 @@ static struct alarm_listview_mode_t alarm_listview_mode = {
                  .on_long_pressed = (key_handler_t)set_key_on_long_pressed,
                  .on_released = (key_handler_t)set_key_on_released,
              },
-             .up_key = {.on_released = (key_handler_t)up_key_on_released},
+             .up_key = {
+                 .on_released = (key_handler_t)up_key_on_released,
+                 .on_long_pressed = (key_handler_t)up_key_on_long_pressed,
+             },
              .down_key = {
                  .on_released = (key_handler_t)down_key_on_released,
                  .on_long_pressed = (key_handler_t)down_key_on_long_pressed,
