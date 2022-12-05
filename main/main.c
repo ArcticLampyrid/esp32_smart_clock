@@ -98,7 +98,7 @@ void app_main()
             if (rx8025_time_cmp(scheduled_alarm_info.at, rx8025_get_time()) <= 0)
             {
                 scheduled_alarm_info.alarm->play(scheduled_alarm_info.alarm);
-                reschedule_alarm(&scheduled_alarm_info, &alarm_list);
+                reschedule_alarm(&scheduled_alarm_info, alarm_list);
             }
         }
 

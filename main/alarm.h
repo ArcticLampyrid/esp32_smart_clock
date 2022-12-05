@@ -24,7 +24,7 @@ typedef struct
     size_t count;
     size_t capacity;
 } arraylist_of_alarm_t;
-arraylist_of_alarm_t arraylist_of_alarm_new();
+arraylist_of_alarm_t* arraylist_of_alarm_new();
 void arraylist_of_alarm_add(arraylist_of_alarm_t *thiz, struct base_alarm_t *member);
 void arraylist_of_alarm_delete(arraylist_of_alarm_t *thiz);
 void arraylist_of_alarm_remove(arraylist_of_alarm_t *thiz, size_t index);
@@ -37,4 +37,4 @@ void reschedule_alarm(struct scheduled_alarm_info_t *dst, arraylist_of_alarm_t *
 
 
 extern struct scheduled_alarm_info_t scheduled_alarm_info;
-extern arraylist_of_alarm_t alarm_list;
+extern arraylist_of_alarm_t *alarm_list;

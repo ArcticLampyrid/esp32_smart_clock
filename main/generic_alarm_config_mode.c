@@ -46,7 +46,7 @@ static void set_key_on_pressed(struct generic_alarm_config_mode_t *mode, enum ke
     if (mode->progress == 11)
     {
         switch_to_alarm_listview(mode->index);
-        reschedule_alarm(&scheduled_alarm_info, &alarm_list);
+        reschedule_alarm(&scheduled_alarm_info, alarm_list);
     }
 }
 static void up_key_on_pressed(struct generic_alarm_config_mode_t *mode, enum key_state_t before)

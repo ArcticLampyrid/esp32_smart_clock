@@ -41,15 +41,15 @@ static void set_key_on_pressed(struct alarm_controller_mode_t *mode, enum key_st
     switch (mode->option_index)
     {
     case 0:
-        arraylist_of_alarm_add(&alarm_list, generic_alarm_new());
-        switch_to_alarm_listview(alarm_list.count - 1);
+        arraylist_of_alarm_add(alarm_list, generic_alarm_new());
+        switch_to_alarm_listview(alarm_list->count - 1);
         break;
     case 1:
-        arraylist_of_alarm_add(&alarm_list, hourly_chime_new());
-        switch_to_alarm_listview(alarm_list.count - 1);
+        arraylist_of_alarm_add(alarm_list, hourly_chime_new());
+        switch_to_alarm_listview(alarm_list->count - 1);
         break;
     default:
-        switch_to_alarm_listview(alarm_list.count);
+        switch_to_alarm_listview(alarm_list->count);
         break;
     }
 }

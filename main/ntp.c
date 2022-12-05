@@ -21,7 +21,7 @@ static void on_time_sync(struct timeval *tv)
     struct tm *nowtm;
     nowtm = localtime(&tv->tv_sec);
     rx8025_set_time(rx8025_time_from_tm(nowtm));
-    reschedule_alarm(&scheduled_alarm_info, &alarm_list);
+    reschedule_alarm(&scheduled_alarm_info, alarm_list);
 }
 void ntp_sync_init()
 {

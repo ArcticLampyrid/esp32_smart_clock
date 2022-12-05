@@ -4,14 +4,13 @@
 #include <esp_log.h>
 static char TAG[] = "clock_alarm";
 struct scheduled_alarm_info_t scheduled_alarm_info;
-arraylist_of_alarm_t alarm_list;
-arraylist_of_alarm_t arraylist_of_alarm_new()
+arraylist_of_alarm_t *alarm_list;
+arraylist_of_alarm_t *arraylist_of_alarm_new()
 {
-    arraylist_of_alarm_t result = {
-        .data = (struct base_alarm_t **)malloc(sizeof(intptr_t) * 4),
-        .count = 0,
-        .capacity = 4,
-    };
+    arraylist_of_alarm_t *result = malloc(sizeof(arraylist_of_alarm_t));
+    result->data = (struct base_alarm_t **)malloc(sizeof(intptr_t) * 4);
+    result->count = 0;
+    result->capacity = 4;
     return result;
 }
 void arraylist_of_alarm_add(arraylist_of_alarm_t *thiz, struct base_alarm_t *member)

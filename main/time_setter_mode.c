@@ -45,7 +45,7 @@ static void set_key_on_pressed(struct time_setter_mode_t *mode, enum key_state_t
     if (mode->progress == 6)
     {
         rx8025_set_time(mode->time);
-        reschedule_alarm(&scheduled_alarm_info, &alarm_list);
+        reschedule_alarm(&scheduled_alarm_info, alarm_list);
         switch_to_homepage();
     }
 }

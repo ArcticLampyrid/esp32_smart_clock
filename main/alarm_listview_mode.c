@@ -57,12 +57,12 @@ static void mode_key_on_pressed(struct alarm_listview_mode_t *mode, enum key_sta
 static void set_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
 {
     ESP_LOGI(TAG, "set_key_on_long_pressed, currect index: %d", mode->index);
-    if (mode->index < 0 || mode->index >= alarm_list.count)
+    if (mode->index < 0 || mode->index >= alarm_list->count)
     {
         switch_to_alarm_controller();
         return;
     }
-    struct base_alarm_t *it = alarm_list.data[mode->index];
+    struct base_alarm_t *it = alarm_list->data[mode->index];
     it->switch_to_config(it, mode->index);
 }
 static void up_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before)
@@ -77,12 +77,12 @@ static void up_key_on_released(struct alarm_listview_mode_t *mode, enum key_stat
 }
 static void up_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
 {
-    if (mode->index < 0 || mode->index >= alarm_list.count)
+    if (mode->index < 0 || mode->index >= alarm_list->count)
     {
         return;
     }
-    struct base_alarm_t *it = alarm_list.data[mode->index];
-    arraylist_of_alarm_remove(&alarm_list, mode->index);
+    struct base_alarm_t *it = alarm_list->data[mode->index];
+    arraylist_of_alarm_remove(alarm_list, mode->index);
     it->delete_it(it);
     alarm_listview_mode.redraw = true;
 }
@@ -91,19 +91,19 @@ static void down_key_on_released(struct alarm_listview_mode_t *mode, enum key_st
     if (before == KEY_STATE_PRESSED)
     {
         mode->index++;
-        if (mode->index > alarm_list.count)
-            mode->index = alarm_list.count;
+        if (mode->index > alarm_list->count)
+            mode->index = alarm_list->count;
         alarm_listview_mode.redraw = true;
     }
 }
 static void down_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
 {
-    if (mode->index < 0 || mode->index >= alarm_list.count)
+    if (mode->index < 0 || mode->index >= alarm_list->count)
     {
         return;
     }
-    struct base_alarm_t *it = alarm_list.data[mode->index];
-    arraylist_of_alarm_remove(&alarm_list, mode->index);
+    struct base_alarm_t *it = alarm_list->data[mode->index];
+    arraylist_of_alarm_remove(alarm_list, mode->index);
     it->delete_it(it);
     alarm_listview_mode.redraw = true;
 }
@@ -111,11 +111,11 @@ static void set_key_on_released(struct alarm_listview_mode_t *mode, enum key_sta
 {
     if (before == KEY_STATE_PRESSED)
     {
-        if (mode->index >= 0 && mode->index < alarm_list.count)
+        if (mode->index >= 0 && mode->index < alarm_list->count)
         {
-            struct base_alarm_t *it = alarm_list.data[mode->index];
+            struct base_alarm_t *it = alarm_list->data[mode->index];
             it->enabled ^= 0x1;
-            reschedule_alarm(&scheduled_alarm_info, &alarm_list);
+            reschedule_alarm(&scheduled_alarm_info, alarm_list);
             alarm_listview_mode.redraw = true;
         }
     }
@@ -127,9 +127,9 @@ static void alarm_listview_on_refresh(struct alarm_listview_mode_t *mode)
         return;
     }
     alarm_listview_mode.redraw = false;
-    if (mode->index >= 0 && mode->index < alarm_list.count)
+    if (mode->index >= 0 && mode->index < alarm_list->count)
     {
-        struct base_alarm_t *it = alarm_list.data[mode->index];
+        struct base_alarm_t *it = alarm_list->data[mode->index];
         it->display(it, mode->index);
     }
     else
