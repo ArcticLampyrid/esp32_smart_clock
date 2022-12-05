@@ -16,7 +16,7 @@ struct base_alarm_t
     alarm_play_t play;
     alarm_switch_to_config_t switch_to_config;
     alarm_display_t display;
-    alarm_delete_t delete_it
+    alarm_delete_t delete_it;
 };
 typedef struct
 {
