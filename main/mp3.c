@@ -131,7 +131,7 @@ static void mp3_cmd_no_wait(uint8_t command, uint16_t argument, bool ack)
     buffer[7] = (uint8_t)(sum >> 8);
     buffer[8] = (uint8_t)(sum & 0xFF);
     uart_write_bytes(MP3_UART_NUM, buffer, sizeof(buffer));
-    uart_wait_tx_done(MP3_UART_NUM, portMAX_DELAY);
+    ESP_ERROR_CHECK(uart_wait_tx_done(MP3_UART_NUM, portMAX_DELAY));
     ESP_LOGI(TAG, "send, command: 0x%x, argument: 0x%x", command, argument);
 }
 static bool mp3_cmd(uint8_t command, uint16_t argument, bool ack)

@@ -31,6 +31,27 @@ void task_dispatch_for_keys(void *pvParameters)
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
+
+void task_dispatch_for_alarms(void *pvParameters)
+{
+    for (;;)
+    {
+        if (scheduled_alarm_info.alarms->count != 0)
+        {
+            if (rx8025_time_cmp(scheduled_alarm_info.at, rx8025_get_time()) <= 0)
+            {
+                for (size_t i = 0; i < scheduled_alarm_info.alarms->count; i++)
+                {
+                    struct base_alarm_t *it = scheduled_alarm_info.alarms->data[i];
+                    it->play(it);
+                }
+                reschedule_alarm(&scheduled_alarm_info, alarm_list);
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
 void app_main()
 {
     buzzer_init();
@@ -63,8 +84,7 @@ void app_main()
     ESP_ERROR_CHECK(i2c_param_config(I2C_NUM, &i2c_conf));
     ESP_ERROR_CHECK(i2c_driver_install(I2C_NUM, i2c_conf.mode, 0, 0, 0));
 
-    alarm_list = arraylist_of_alarm_new();
-    scheduled_alarm_info.alarm = NULL;
+    alarm_init();
 
     mp3_init();
     mp3_reset();
@@ -79,10 +99,17 @@ void app_main()
     ESP_LOGI(TAG, "welcome to use SMARTCLK");
     oled_welcome();
     vTaskDelay(pdMS_TO_TICKS(2000));
+    mp3_reset();
 
     switch_to_homepage();
     xTaskCreate(task_dispatch_for_keys,
-                "task_dispatch_for_keys",
+                "dispatch_for_keys",
+                8192,
+                NULL,
+                tskIDLE_PRIORITY,
+                NULL);
+    xTaskCreate(task_dispatch_for_alarms,
+                "dispatch_for_alarms",
                 8192,
                 NULL,
                 tskIDLE_PRIORITY,
@@ -93,16 +120,8 @@ void app_main()
     {
         if (g_currect_mode->on_refresh)
             g_currect_mode->on_refresh(g_currect_mode);
-        if (scheduled_alarm_info.alarm)
-        {
-            if (rx8025_time_cmp(scheduled_alarm_info.at, rx8025_get_time()) <= 0)
-            {
-                scheduled_alarm_info.alarm->play(scheduled_alarm_info.alarm);
-                reschedule_alarm(&scheduled_alarm_info, alarm_list);
-            }
-        }
 
-        vTaskDelay(10);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
     // ESP_LOGI(TAG, "All done!");
 }

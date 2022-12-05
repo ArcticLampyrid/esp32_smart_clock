@@ -24,17 +24,18 @@ typedef struct
     size_t count;
     size_t capacity;
 } arraylist_of_alarm_t;
-arraylist_of_alarm_t* arraylist_of_alarm_new();
+arraylist_of_alarm_t *arraylist_of_alarm_new();
 void arraylist_of_alarm_add(arraylist_of_alarm_t *thiz, struct base_alarm_t *member);
 void arraylist_of_alarm_delete(arraylist_of_alarm_t *thiz);
+void arraylist_of_alarm_clear(arraylist_of_alarm_t *thiz);
 void arraylist_of_alarm_remove(arraylist_of_alarm_t *thiz, size_t index);
 struct scheduled_alarm_info_t
 {
-    struct base_alarm_t *alarm;
+    arraylist_of_alarm_t *alarms;
     struct rx8025_time_t at;
 };
 void reschedule_alarm(struct scheduled_alarm_info_t *dst, arraylist_of_alarm_t *arr);
+void alarm_init();
 
-
-extern struct scheduled_alarm_info_t scheduled_alarm_info;
-extern arraylist_of_alarm_t *alarm_list;
+extern volatile struct scheduled_alarm_info_t scheduled_alarm_info;
+extern arraylist_of_alarm_t *volatile alarm_list;

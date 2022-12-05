@@ -7,6 +7,7 @@
 #include "alarm_belling_mode.h"
 #include "weather.h"
 #include "weather_speech.h"
+#include <freertos/task.h>
 #define MP3_FOLDER_HOURLY_ALARM 3
 static char TAG[] = "hourly_chime";
 static struct rx8025_time_t hourly_chime_schedule(struct hourly_chime_t *thiz, struct rx8025_time_t prev);
@@ -55,7 +56,9 @@ static void hourly_chime_play(struct hourly_chime_t *thiz)
 {
     struct rx8025_time_t time = rx8025_get_time();
     ESP_LOGI(TAG, "hourly_chime_play");
+    mp3_clear_play_completed();
     mp3_play_specified_folder(MP3_FOLDER_HOURLY_ALARM, (bcd8_to_uint8(time.hour) + 23) % 24 + 1);
+    mp3_wait_for_play_completed(pdMS_TO_TICKS(60000));
 }
 static void hourly_chime_switch_to_config(struct hourly_chime_t *thiz, int index)
 {

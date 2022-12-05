@@ -110,13 +110,3 @@ void speak_weather_full(const weather_of_day_t *weather_of_day)
     speak_weather_file_seq(MP3_WEATHER_SPEECH_TEMPERATURE_OF_NIGHT);
     speak_weather_temperature(weather_of_day->temperature_of_night);
 }
-static void task_report_weather(void *pvParameters)
-{
-    weather_update(&g_weather_info);
-    speak_weather_full(&g_weather_info.data[0]);
-    vTaskDelete(NULL);
-}
-void update_and_speak_weather_async()
-{
-    xTaskCreate(task_report_weather, "task_report_weather", 8192, NULL, tskIDLE_PRIORITY, NULL);
-}

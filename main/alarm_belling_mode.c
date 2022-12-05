@@ -1,4 +1,5 @@
 #include "homepage_mode.h"
+#include "alarm_belling_mode.h"
 #include "pin_layout.h"
 #include "oled.h"
 #include <esp_log.h>
@@ -24,6 +25,11 @@ void switch_to_alarm_belling_mode()
 {
     g_currect_mode = (struct base_mode_info_t *)&alarm_belling_mode;
     ESP_LOGI(TAG, "switch to alarm_belling");
+}
+
+bool is_alarm_belling_mode()
+{
+    return g_currect_mode == (struct base_mode_info_t *)&alarm_belling_mode;
 }
 
 static void any_key_on_pressed(struct alarm_belling_mode_t *mode, enum key_state_t before)

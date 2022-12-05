@@ -7,6 +7,8 @@
 #include "alarm_belling_mode.h"
 #include "weather.h"
 #include "weather_speech.h"
+#include "homepage_mode.h"
+#include <freertos/task.h>
 #define MP3_FOLDER_GENERIC_ALARM 1
 static char TAG[] = "generic_alarm";
 static struct rx8025_time_t generic_alarm_schedule(struct generic_alarm_t *thiz, struct rx8025_time_t prev);
@@ -59,11 +61,16 @@ static void generic_alarm_play(struct generic_alarm_t *thiz)
         // Normal alarm
         mp3_play_specified_folder(MP3_FOLDER_GENERIC_ALARM, thiz->bell_seq);
         switch_to_alarm_belling_mode();
+        while (is_alarm_belling_mode())
+        {
+            vTaskDelay(pdMS_TO_TICKS(100));
+        }
     }
     else
     {
         // Weather reporter
-        update_and_speak_weather_async();
+        weather_update(&g_weather_info);
+        speak_weather_full(&g_weather_info.data[0]);
     }
 }
 static void generic_alarm_switch_to_config(struct generic_alarm_t *thiz, int index)

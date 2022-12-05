@@ -3,8 +3,13 @@
 #include <stdlib.h>
 #include <esp_log.h>
 static char TAG[] = "clock_alarm";
-struct scheduled_alarm_info_t scheduled_alarm_info;
-arraylist_of_alarm_t *alarm_list;
+volatile struct scheduled_alarm_info_t scheduled_alarm_info;
+arraylist_of_alarm_t *volatile alarm_list;
+void alarm_init()
+{
+    alarm_list = arraylist_of_alarm_new();
+    scheduled_alarm_info.alarms = arraylist_of_alarm_new();
+}
 arraylist_of_alarm_t *arraylist_of_alarm_new()
 {
     arraylist_of_alarm_t *result = malloc(sizeof(arraylist_of_alarm_t));
@@ -39,6 +44,11 @@ void arraylist_of_alarm_delete(arraylist_of_alarm_t *thiz)
     free(thiz->data);
     thiz->data = NULL;
     thiz->count = thiz->capacity = 0;
+    free(thiz);
+}
+void arraylist_of_alarm_clear(arraylist_of_alarm_t *thiz)
+{
+    thiz->count = 0;
 }
 void arraylist_of_alarm_remove(arraylist_of_alarm_t *thiz, size_t index)
 {
@@ -49,22 +59,27 @@ void reschedule_alarm(struct scheduled_alarm_info_t *dst, arraylist_of_alarm_t *
 {
     struct rx8025_time_t time = rx8025_get_time();
     struct rx8025_time_t scheduled_time = rx8025_time_max_value();
-    struct base_alarm_t *scheduled_alarm = NULL;
+    arraylist_of_alarm_clear(dst->alarms);
     for (size_t i = 0; i < arr->count; i++)
     {
         struct base_alarm_t *alarm = arr->data[i];
         if (!alarm->enabled)
             continue;
         struct rx8025_time_t scheduled_time_for_currect = alarm->schedule(alarm, time);
-        if (rx8025_time_cmp(scheduled_time, scheduled_time_for_currect) > 0)
+        int cmp_ret = rx8025_time_cmp(scheduled_time, scheduled_time_for_currect);
+        if (cmp_ret > 0)
         {
             scheduled_time = scheduled_time_for_currect;
-            scheduled_alarm = alarm;
+            arraylist_of_alarm_clear(dst->alarms);
+            arraylist_of_alarm_add(dst->alarms, alarm);
+        }
+        else if (cmp_ret == 0)
+        {
+            arraylist_of_alarm_add(dst->alarms, alarm);
         }
     }
-    dst->alarm = scheduled_alarm;
     dst->at = scheduled_time;
-    if (scheduled_alarm == NULL)
+    if (dst->alarms->count == 0)
     {
         ESP_LOGI(TAG, "no alarm scheduled");
     }
