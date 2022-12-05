@@ -22,6 +22,7 @@ struct base_alarm_t *generic_alarm_new()
     result->base.play = (alarm_play_t)generic_alarm_play;
     result->base.switch_to_config = (alarm_switch_to_config_t)generic_alarm_switch_to_config;
     result->base.display = (alarm_switch_to_config_t)generic_alarm_display;
+    result->base.delete_it = (alarm_delete_t)generic_alarm_delete;
     result->at_hour = result->at_minute = result->at_second = 0;
     result->at_weekday = 0x7F;
     result->bell_seq = 0;

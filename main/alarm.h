@@ -8,6 +8,7 @@ typedef struct rx8025_time_t (*alarm_schedule_t)(struct base_alarm_t *thiz, stru
 typedef void (*alarm_play_t)(struct base_alarm_t *thiz);
 typedef void (*alarm_switch_to_config_t)(struct base_alarm_t *thiz, int index);
 typedef void (*alarm_display_t)(struct base_alarm_t *thiz, int index);
+typedef void (*alarm_delete_t)(struct base_alarm_t *thiz);
 struct base_alarm_t
 {
     bool enabled;
@@ -15,6 +16,7 @@ struct base_alarm_t
     alarm_play_t play;
     alarm_switch_to_config_t switch_to_config;
     alarm_display_t display;
+    alarm_delete_t delete_it
 };
 typedef struct
 {
@@ -25,6 +27,7 @@ typedef struct
 arraylist_of_alarm_t arraylist_of_alarm_new();
 void arraylist_of_alarm_add(arraylist_of_alarm_t *thiz, struct base_alarm_t *member);
 void arraylist_of_alarm_delete(arraylist_of_alarm_t *thiz);
+void arraylist_of_alarm_remove(arraylist_of_alarm_t *thiz, size_t index);
 struct scheduled_alarm_info_t
 {
     struct base_alarm_t *alarm;

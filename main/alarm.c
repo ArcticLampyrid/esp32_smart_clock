@@ -41,6 +41,11 @@ void arraylist_of_alarm_delete(arraylist_of_alarm_t *thiz)
     thiz->data = NULL;
     thiz->count = thiz->capacity = 0;
 }
+void arraylist_of_alarm_remove(arraylist_of_alarm_t *thiz, size_t index)
+{
+    memmove(thiz->data + index, thiz->data + index + 1, (thiz->count - index - 1) * sizeof(arraylist_of_alarm_t *));
+    thiz->count--;
+}
 void reschedule_alarm(struct scheduled_alarm_info_t *dst, arraylist_of_alarm_t *arr)
 {
     struct rx8025_time_t time = rx8025_get_time();

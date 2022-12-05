@@ -22,6 +22,7 @@ struct base_alarm_t *hourly_chime_new()
     result->base.play = (alarm_play_t)hourly_chime_play;
     result->base.switch_to_config = (alarm_switch_to_config_t)hourly_chime_switch_to_config;
     result->base.display = (alarm_switch_to_config_t)hourly_chime_display;
+    result->base.delete_it = (alarm_delete_t)hourly_chime_delete;
     result->hour_mask = 0x3FFF80; // bit[7:22]<-1 (excluding bit[22] but including bit[8])
     return (struct base_alarm_t *)result;
 }

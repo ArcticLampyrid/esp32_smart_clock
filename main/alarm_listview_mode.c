@@ -15,8 +15,10 @@ static void mode_key_on_pressed(struct alarm_listview_mode_t *mode, enum key_sta
 static void set_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before);
 static void set_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before);
 static void alarm_listview_on_refresh(struct alarm_listview_mode_t *mode);
-static void up_key_on_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before);
-static void down_key_on_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before);
+static void up_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before);
+static void up_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before);
+static void down_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before);
+static void down_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before);
 
 struct alarm_listview_mode_t
 {
@@ -30,8 +32,11 @@ static struct alarm_listview_mode_t alarm_listview_mode = {
                  .on_long_pressed = (key_handler_t)set_key_on_long_pressed,
                  .on_released = (key_handler_t)set_key_on_released,
              },
-             .up_key = {.on_pressed = (key_handler_t)up_key_on_pressed},
-             .down_key = {.on_pressed = (key_handler_t)down_key_on_pressed},
+             .up_key = {.on_released = (key_handler_t)up_key_on_released},
+             .down_key = {
+                 .on_released = (key_handler_t)down_key_on_released,
+                 .on_long_pressed = (key_handler_t)down_key_on_long_pressed,
+             },
              .on_refresh = (on_refresh_t)alarm_listview_on_refresh}};
 void switch_to_alarm_listview(int index)
 {
@@ -54,22 +59,49 @@ static void set_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key
         switch_to_alarm_controller();
         return;
     }
-    mode->index = alarm_list.count - 1;
     struct base_alarm_t *it = alarm_list.data[mode->index];
     it->switch_to_config(it, mode->index);
 }
-static void up_key_on_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
+static void up_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before)
 {
-    mode->index--;
-    if (mode->index < 0)
-        mode->index = 0;
+    if (before == KEY_STATE_PRESSED)
+    {
+        mode->index--;
+        if (mode->index < 0)
+            mode->index = 0;
+        alarm_listview_mode.redraw = true;
+    }
+}
+static void up_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
+{
+    if (mode->index < 0 || mode->index >= alarm_list.count)
+    {
+        return;
+    }
+    struct base_alarm_t *it = alarm_list.data[mode->index];
+    arraylist_of_alarm_remove(&alarm_list, mode->index);
+    it->delete_it(it);
     alarm_listview_mode.redraw = true;
 }
-static void down_key_on_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
+static void down_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before)
 {
-    mode->index++;
-    if (mode->index > alarm_list.count)
-        mode->index = alarm_list.count;
+    if (before == KEY_STATE_PRESSED)
+    {
+        mode->index++;
+        if (mode->index > alarm_list.count)
+            mode->index = alarm_list.count;
+        alarm_listview_mode.redraw = true;
+    }
+}
+static void down_key_on_long_pressed(struct alarm_listview_mode_t *mode, enum key_state_t before)
+{
+    if (mode->index < 0 || mode->index >= alarm_list.count)
+    {
+        return;
+    }
+    struct base_alarm_t *it = alarm_list.data[mode->index];
+    arraylist_of_alarm_remove(&alarm_list, mode->index);
+    it->delete_it(it);
     alarm_listview_mode.redraw = true;
 }
 static void set_key_on_released(struct alarm_listview_mode_t *mode, enum key_state_t before)
