@@ -9,6 +9,7 @@
 - [`/eda`](/eda)：嘉立创EDA（标准版）工程文件
 - [`/main`](/main)：软件主代码
 - [`/components`](/components)：软件所依赖的组件
+- [`/resources`](/resources)：软件资源，应放置在SD卡上
 
 ## 电路实物图
 ![Pratical Image](/docs/Practical-Image.jpg)
