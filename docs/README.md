@@ -11,7 +11,7 @@
 - [`/components`](/components)：软件所依赖的组件
 
 ## 电路实物图
-![Pratical Image](Practical-Image.jpg)
+![Pratical Image](/docs/Practical-Image.jpg)
 
 ## 软件使用说明
 用户可通过MODE按键在多个模式间切换，以查看/修改不同的内容。本产品主要包括以下模式：
@@ -34,13 +34,13 @@
 短按SET键可触发立即同步，长按SET键进入配置模式，可配置是否启用定时同步和时区信息。  
 
 ## 软件架构图
-![Software Architecture Diagram](SMARTCLK-Architecture-Diagram.png)
+![Software Architecture Diagram](/docs/SMARTCLK-Architecture-Diagram.png)
 
 ## 电路图预览
 **仅供参考，最新电路图请以EDA工程文件为准**  
 
-![Schematic_clock](Schematic_clock.svg)  
-![Schematic_dc5521_to_3.3v](Schematic_dc5521_to_3.3v.svg)  
+![Schematic_clock](/docs/Schematic_clock.svg)  
+![Schematic_dc5521_to_3.3v](/docs/Schematic_dc5521_to_3.3v.svg)  
 *(Updated at 2022-12-04)*  
 
 ## 硬件物料表
