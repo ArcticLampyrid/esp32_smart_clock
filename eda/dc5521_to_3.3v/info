@@ -1,0 +1,203 @@
+{
+  "uuid": "46dd442fb25447a1fe55fb884edb8cdc",
+  "path": "Offline/dc5521_to_3.3v",
+  "name": "dc5521_to_3.3v",
+  "content": "",
+  "created_at": "2022-11-18 09:57:08",
+  "updated_at": "2022-12-07 00:33:27",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "14416bff59d4421c4045dfbbde7c9e61",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "ad87c8c7dbfd5446fe414b733e1b922f": 2,
+        "7690fe6255ddf8c3cb599ebe02924dd2": 2,
+        "908ced202529416bac1203a9b300d842": 1,
+        "8c95eef853b1473e9539399823e4b359": 1,
+        "0d0a13f4d5e4481aa82dc0293d1aa27e": 1,
+        "577e749be6d34ab68fd6b41fc39c3116": 1,
+        "163970b9f0738d18a5e45038b79d5fef": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "CIN1",
+          1,
+          "CAP-TH_BD4.0-P1.50-D0.8-FD",
+          "CIN1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "22uF 25V 4*7",
+            "BOM_Supplier Part": "C43840",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "4e77392dad62499487a3be9d0c41e95e",
+            "uuid": "ad87c8c7dbfd5446fe414b733e1b922f"
+          }
+        ],
+        [
+          "CIN2",
+          1,
+          "CAP-TH_BD4.0-P1.50-D0.8-FD",
+          "CIN2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "1uF 50V 4*5",
+            "BOM_Supplier Part": "C47848",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "4e77392dad62499487a3be9d0c41e95e",
+            "uuid": "7690fe6255ddf8c3cb599ebe02924dd2"
+          }
+        ],
+        [
+          "COUT1",
+          1,
+          "CAP-TH_BD4.0-P1.50-D0.8-FD",
+          "COUT1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "22uF 25V 4*7",
+            "BOM_Supplier Part": "C43840",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "4e77392dad62499487a3be9d0c41e95e",
+            "uuid": "ad87c8c7dbfd5446fe414b733e1b922f"
+          }
+        ],
+        [
+          "COUT2",
+          1,
+          "CAP-TH_BD4.0-P1.50-D0.8-FD",
+          "COUT2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "1uF 50V 4*5",
+            "BOM_Supplier Part": "C47848",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "4e77392dad62499487a3be9d0c41e95e",
+            "uuid": "7690fe6255ddf8c3cb599ebe02924dd2"
+          }
+        ],
+        [
+          "1N5822RLG",
+          1,
+          "DO-201AD_BD5.3-L8.4-P12.50-D1.4-RD",
+          "D1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C232464",
+            "BOM_Manufacturer": "onsemi(安森美)",
+            "BOM_Manufacturer Part": "1N5822RLG",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "ba4a753162c8448790556d107c1b6560",
+            "uuid": "577e749be6d34ab68fd6b41fc39c3116"
+          }
+        ],
+        [
+          "DC-005 5.5-2.0MM",
+          1,
+          "DC-IN-TH_DC-5520-1",
+          "DC1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "BOOMELE(博穆精密)",
+            "BOM_Manufacturer Part": "DC-005 2.0",
+            "BOM_Supplier Part": "C16214",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "4a74aaf777704eda8d30ee5dfa5ca4bb",
+            "uuid": "163970b9f0738d18a5e45038b79d5fef"
+          }
+        ],
+        [
+          "HDR-M-2.54_2x3",
+          1,
+          "HDR-M-2.54_2X3",
+          "J1",
+          {
+            "BOM_Supplier Part": "C65114",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "a5b8fff1a45c42f9aa306bafedcb5748",
+            "uuid": "8c95eef853b1473e9539399823e4b359"
+          }
+        ],
+        [
+          "HDR-M-2.54_2x2",
+          1,
+          "HDR-M-2.54_2X2",
+          "J2",
+          {
+            "BOM_Supplier Part": "C66690",
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "puuid": "8c011694efe04de7ac0c392bf11240d5",
+            "uuid": "0d0a13f4d5e4481aa82dc0293d1aa27e"
+          }
+        ],
+        [
+          "AMS1117-3.3V",
+          1,
+          "SOT-223-4_L6.5-W3.5-P2.30-LS7.0-BR",
+          "LDO1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C2688239",
+            "BOM_Manufacturer": "WPMtek(维攀微)",
+            "BOM_Manufacturer Part": "AMS1117-3.3V",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "09952c2799c54b76904e264324ada8f3",
+            "uuid": "908ced202529416bac1203a9b300d842"
+          }
+        ]
+      ],
+      "updateTime": 1670344407,
+      "createTime": 1668089087,
+      "histories": [],
+      "created_at": "2022-11-10 22:04:47",
+      "updated_at": "2022-12-07 00:33:27"
+    },
+    {
+      "uuid": "2c9310cf93262f90509d979309805470",
+      "title": "PCB_dc5521_to_3.3v",
+      "filename": "PCB_dc5521_to_3.3v.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "ba4a753162c8448790556d107c1b6560": 1,
+        "a5b8fff1a45c42f9aa306bafedcb5748": 1,
+        "8c011694efe04de7ac0c392bf11240d5": 1,
+        "09952c2799c54b76904e264324ada8f3": 1,
+        "4e77392dad62499487a3be9d0c41e95e": 4,
+        "4a74aaf777704eda8d30ee5dfa5ca4bb": 1
+      },
+      "BOM": [],
+      "updateTime": 1669108658,
+      "createTime": 1668091903,
+      "histories": [],
+      "created_at": "2022-11-10 22:51:43",
+      "updated_at": "2022-11-22 17:17:38"
+    }
+  ],
+  "sort": [],
+  "title": "dc5521_to_3.3v",
+  "foldername": "dc5521_to_3.3v",
+  "schfilename": "dc5521_to_3.3v.json",
+  "schfilemtime": 1670344407208
+}

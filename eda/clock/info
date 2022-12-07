@@ -1,0 +1,257 @@
+{
+  "uuid": "e0037bf60c82fbaa76ded037ee9bd6f5",
+  "path": "Offline/clock",
+  "name": "clock",
+  "content": "",
+  "created_at": "2022-11-03 09:08:48",
+  "updated_at": "2022-12-07 00:35:38",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "31e714e18cf12e7f89ea6ada6c05f893",
+      "title": "main",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "7dc42923031c4e0885afc9ef57747e95": 1,
+        "75621740ca464546be47863104706b6e": 1,
+        "fde0be6b43404af684ac96cf02e3940b": 1,
+        "cf98a296e7fa43ac95cc6bf800f08ce0": 1,
+        "18479f1c4d4749c5a4c4387846c5d657": 4,
+        "1c65ef47e9cf45f3ae12c20b70a38673": 1,
+        "7690fe6255ddf8c3cb599ebe02924dd2": 1,
+        "5095e31ceace4e66bded9af904f25d43": 1,
+        "5b27cf56ea9a4ab2b877ba0dcfb3a7ee": 2,
+        "35af999ad43c4d92a0d5441cd33fd042": 2,
+        "5b2d3e061c384d6a9671cb2e9632c970": 1,
+        "ce8f1d2a1f3e4c5e8e4a07de77211f2b": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "PJ-313D_C319112",
+          1,
+          "AUDIO-TH_PJ-3135-B",
+          "AUDIO",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C319112",
+            "BOM_Manufacturer": "XKB Connectivity(中国星坤)",
+            "BOM_Manufacturer Part": "PJ-3135-B",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "bfcfa068c66744e592da0c49eacf1b02",
+            "uuid": "ce8f1d2a1f3e4c5e8e4a07de77211f2b"
+          }
+        ],
+        [
+          "无源蜂鸣器",
+          1,
+          "BUZ-TH_P4",
+          "BUZZER",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C9900012728",
+            "BOM_Manufacturer": "null",
+            "BOM_Manufacturer Part": "有源蜂鸣器直径9*5.5mm3V",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "c9a18c308b594a4c9e7e0d455e335730",
+            "uuid": "5095e31ceace4e66bded9af904f25d43"
+          }
+        ],
+        [
+          "1uF",
+          1,
+          "CAP-TH_BD4.0-P1.50-D0.8-FD",
+          "C1",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "ValuePro",
+            "BOM_Manufacturer Part": "1uF 50V 4*5",
+            "BOM_Supplier Part": "C47848",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "4e77392dad62499487a3be9d0c41e95e",
+            "uuid": "7690fe6255ddf8c3cb599ebe02924dd2"
+          }
+        ],
+        [
+          "ESP32-DEVKITM-1",
+          1,
+          "ESP32-DEVKITM-1",
+          "DEVKIT",
+          {
+            "BOM_Manufacturer": "Espressif",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier": "Espressif",
+            "BOM_Supplier Part": "ESP32-DEVKITM-1",
+            "puuid": "7e83e1085a89460b97f545cad435ff67",
+            "uuid": "cf98a296e7fa43ac95cc6bf800f08ce0"
+          }
+        ],
+        [
+          "K4-6×6_TH",
+          4,
+          "KEY-TH_4P-L6.0-W6.0-P4.50-LS6.5",
+          "DOWN_KEY,MODE_KEY,SET_KEY,UP_KEY",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C136684",
+            "BOM_Manufacturer": "韩国韩荣",
+            "BOM_Manufacturer Part": "K2-1102DP-E4SW-04",
+            "puuid": "557c105168d444a992e25584f55bcbb2",
+            "uuid": "18479f1c4d4749c5a4c4387846c5d657"
+          }
+        ],
+        [
+          "MP3-TF-16P2",
+          1,
+          "MP3-TF-16P2_C2829314",
+          "MP3",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C2829314",
+            "BOM_Manufacturer": "null",
+            "BOM_Manufacturer Part": "MP3-TF-16P2",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "0e4a09970d89471da8db0a5211cb3fa1",
+            "uuid": "fde0be6b43404af684ac96cf02e3940b"
+          }
+        ],
+        [
+          "0.96'OLED-SPI(7Pin)_JX_XX",
+          1,
+          "0.96'OLED-SPI(7PIN)_JX",
+          "OLED",
+          {
+            "BOM_Manufacturer Part": "",
+            "puuid": "a57c119a38d04537a42bd70940b7bd68",
+            "uuid": "75621740ca464546be47863104706b6e"
+          }
+        ],
+        [
+          "cr1220x2_to_3.3v",
+          1,
+          "PRI_CR1220X2_TO_3V3",
+          "POWER",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "personal",
+            "puuid": "42cf1a55963c488d82e540d59f4f0e49",
+            "uuid": "5b2d3e061c384d6a9671cb2e9632c970"
+          }
+        ],
+        [
+          "4.7kΩ",
+          2,
+          "RES-TH_BD2.4-L6.3-P10.30-D0.6",
+          "R1,R2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C410614",
+            "BOM_Manufacturer": "Tyohm(幸亚电阻)",
+            "BOM_Manufacturer Part": "RN1/4W4K7FT/BA1",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "2915f1f0a54941d7b912decfe617b47f",
+            "uuid": "5b27cf56ea9a4ab2b877ba0dcfb3a7ee"
+          }
+        ],
+        [
+          "RX8025T-UB",
+          1,
+          "SOIC-14_L10.1-W5.0-P1.27-LS7.4-BL",
+          "RX8025",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Manufacturer": "EPSON(爱普生)",
+            "BOM_Manufacturer Part": "RX8025T-UB",
+            "BOM_Supplier Part": "C17353",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "a5ce3a1cbdd1473e966b3074419ae3da",
+            "uuid": "7dc42923031c4e0885afc9ef57747e95"
+          }
+        ],
+        [
+          "2308/8Ω1W/SPEAKER",
+          1,
+          "圆形2308/8Ω1W/喇叭",
+          "SPEAKER",
+          {
+            "BOM_Manufacturer": "",
+            "BOM_Manufacturer Part": "",
+            "BOM_Supplier Part": "",
+            "BOM_Supplier": "",
+            "puuid": "b0f63946b7c34052ad4fad2595981b63",
+            "uuid": "1c65ef47e9cf45f3ae12c20b70a38673"
+          }
+        ],
+        [
+          "KH-2.54FH-1X17P-H8.5",
+          2,
+          "HDR-TH_17P-P2.54-V-F",
+          "U1,U2",
+          {
+            "BOM_Supplier": "LCSC",
+            "BOM_Supplier Part": "C2932677",
+            "BOM_Manufacturer": "kinghelm(金航标)",
+            "BOM_Manufacturer Part": "KH-2.54FH-1X17P-H8.5",
+            "BOM_JLCPCB Part Class": "Extended Part",
+            "puuid": "c450c102872f45e5a9d8cd7dc5b9064c",
+            "uuid": "35af999ad43c4d92a0d5441cd33fd042"
+          }
+        ]
+      ],
+      "updateTime": 1670344538,
+      "createTime": 1667437728,
+      "histories": [],
+      "created_at": "2022-11-03 09:08:48",
+      "updated_at": "2022-12-07 00:35:38"
+    },
+    {
+      "uuid": "53a6555df361374f4b9a6d77161300d6",
+      "puuid": "e0037bf60c82fbaa76ded037ee9bd6f5",
+      "title": "PCB_clock",
+      "filename": "PCB_clock.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "b0f63946b7c34052ad4fad2595981b63": 1,
+        "bfcfa068c66744e592da0c49eacf1b02": 1,
+        "4e77392dad62499487a3be9d0c41e95e": 1,
+        "2915f1f0a54941d7b912decfe617b47f": 2,
+        "c450c102872f45e5a9d8cd7dc5b9064c": 2,
+        "c9a18c308b594a4c9e7e0d455e335730": 1,
+        "7e83e1085a89460b97f545cad435ff67": 1,
+        "557c105168d444a992e25584f55bcbb2": 4,
+        "0e4a09970d89471da8db0a5211cb3fa1": 1,
+        "a57c119a38d04537a42bd70940b7bd68": 1,
+        "42cf1a55963c488d82e540d59f4f0e49": 1,
+        "a5ce3a1cbdd1473e966b3074419ae3da": 1
+      },
+      "BOM": [],
+      "updateTime": 1668673501,
+      "createTime": 1668604587,
+      "histories": [],
+      "created_at": "2022-11-16 21:16:27",
+      "updated_at": "2022-11-17 16:25:01"
+    }
+  ],
+  "sort": [
+    "31e714e18cf12e7f89ea6ada6c05f893",
+    "51fa81c921e23912d2b27d951b337510"
+  ],
+  "title": "clock",
+  "foldername": "clock",
+  "schfilename": "clock.json",
+  "schfilemtime": 1670344538341
+}
